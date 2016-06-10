@@ -66,11 +66,15 @@ def help():
 .define <word>      Get the definition of <word>.
 .dickserv           Information about the bot.
 .fml                Random \'FuckMyLife\' story.
+.g <query>          Search <query> on Google.
 .imdb <query>       Search IMDb and return the 1st result for <search>.
 .isup <url>         Check if <url> is up or not.
 .ltc                Litecoin rate in USD.
 .reddit <subreddit> Read top posts from <subreddit>
 .talent             RIP DITTLE DIP DIP DIP DIP IT\'S YA BIRTHDAY!!1@11!
+.todo               Read all the To DO entries for your nick.
+.todo add <string>  Add a new To Do entry.
+.todo del <number>  Delete the <number> To Do entry.
 .ud <word>          Get the urban dictionary definition of <word>.
 .uptime             Get the amount of time DickServ has been running.
 .wolfram <ask>      Get the results of <query> from WolframAlpha.
