@@ -34,3 +34,6 @@ Browse to the */core/* folder and edit your *config.py* file.
 | .uptime | Get the amount of time DickServ has been running. |
 | .wolfram \<ask> | Get the results of <query> from WolframAlpha. |
 | .yt \<query> | Search <query> on YouTube. |
+
+##### Notice
+Haven't finished converting all the source from Python 2, so a few feautures are missing still. (ASCII / Google command, URL parsing, etc..)
