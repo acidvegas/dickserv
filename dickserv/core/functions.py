@@ -11,6 +11,13 @@ import time
 
 import config
 
+def clean_whitespace(string):
+    while '  ' in string:
+        string = string.replace('  ', ' ')
+    if string[:1]  == ' ' : string = string[1:]
+    if string[-1:] == ' ' : string = string[:-1]
+    return string
+
 def between(source, start, stop):
     data = re.compile(start + '(.*?)' + stop, re.IGNORECASE).search(source)
     if data : return data.group(1)
