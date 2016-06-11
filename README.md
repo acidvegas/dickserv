@@ -35,5 +35,8 @@ Browse to the */core/* folder and edit your *config.py* file.
 | .wolfram \<ask> | Get the results of <query> from WolframAlpha. |
 | .yt \<query> | Search <query> on YouTube. |
 
-##### Notice
-Haven't finished converting all the source from Python 2, so a few feautures are missing still. (ASCII / Google command, URL parsing, etc..)
+##### ToDo
+- Fix google command.
+- Use sqlite3 databases for todo managment. (Max of 3 entrees per-nick, 15 todo's max.)
+- Add admin only commands via PM that checks for a certain user@host mask. (ignore, say, act, etc...)
+- Baisc channel management to replace ChanServ.
