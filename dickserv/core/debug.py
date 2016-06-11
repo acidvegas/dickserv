@@ -8,21 +8,14 @@ import datetime
 import os
 import sys
 
-def action(msg):
-    print('%s | [#] - %s' % (time(), msg))
-
-def alert(msg):
-    print('%s | [+] - %s' % (time(), msg))
-
 def check_root():
     if os.getuid() == 0 or os.geteuid() == 0:
         return True
     else:
         return False
-    return False
     
-def check_version(major, minor):
-    if sys.version_info.major == major and sys.version_info.minor == minor:
+def check_version(major):
+    if sys.version_info.major == major:
         return True
     else:
         return False
@@ -57,8 +50,7 @@ def info():
     print(''.rjust(56, '#'))
 
 def help():
-    return '''
-@help               Information about the commands.
+    return '''@help               Information about the commands.
 .ascii list         A list of all the ASCII art files.
 .ascii <name>       Display the <name> ASCII art file.
 .btc                Bitcoin rate in USD.
@@ -78,8 +70,7 @@ def help():
 .ud <word>          Get the urban dictionary definition of <word>.
 .uptime             Get the amount of time DickServ has been running.
 .wolfram <ask>      Get the results of <query> from WolframAlpha.
-.yt <query>         Search <query> on YouTube.
-    '''
+.yt <query>         Search <query> on YouTube.'''
 
 def irc(msg):
     print('%s | [~] - %s' % (time(), msg))
