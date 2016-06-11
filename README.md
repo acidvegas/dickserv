@@ -2,7 +2,7 @@
 A bot with many useful commands &amp; features for the Internet Relay Chat (IRC) protocol.
 
 ###### Requirments
- - [BeautifulSoup Library](https://www.crummy.com/software/BeautifulSoup/)
+ - [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/)
 
 ###### Config
 Browse to the */core/* folder and edit your *config.py* file.
