@@ -11,6 +11,8 @@ import urllib.request
 
 from bs4 import BeautifulSoup
 
+import functions
+
 def clean_url(url):
     for prefix in ['http://', 'https://', 'www.']:
         url = url.replace(prefix, '', 1)
@@ -22,24 +24,34 @@ def data_quote(data):
 def data_encode(data):
     return urllib.parse.urlencode(data)
 
-def get_title(url):
-    source = get_source(url)
-    soup = BeautifulSoup(source, 'html.parser')
-    return soup.title.string.replace('\n', '').replace('\t', '')
+def get_json(url):
+    return json.loads(get_source(url))
 
 def get_source(url, data=None):
+    source = get_url(url, data)
+    charset = source.headers.get_content_charset()
+    if charset:
+        return source.read().decode(charset)
+    else:
+        return source.read()
+    
+def get_title(url):
+    source = get_source(url)
+    soup   = BeautifulSoup(source, 'html.parser')
+    title  = soup.title.string.replace('\n', '').replace('\t', '')
+    return functions.clean_whitespace(title)
+
+def get_type(url):
+    return get_url(url).info().get_content_type()
+
+def get_url(url, data=None):
     if data : req = urllib.request.Request(url, data)
     else    : req = urllib.request.Request(url)
     req.add_header('User-Agent', 'DickServ/1.0')
-    source = urllib.request.urlopen(req)
-    charset = source.headers.get_content_charset()
-    return source.read().decode(charset)
-    
-def get_type(url):
-    return urllib.request.urlopen(url).info().get_content_type()
+    return urllib.request.urlopen(req)
 
-def get_json(url):
-    return json.loads(get_source(url))
+def parse_urls(string):
+    return re.compile('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', re.IGNORECASE).findall(string)
 
 def strip_html(source):
     return re.compile(r'<.*?>').sub('', source)
