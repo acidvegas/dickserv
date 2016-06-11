@@ -6,7 +6,6 @@
 
 from xml.etree import ElementTree as etree
 
-import config
 import httplib
 
 def ask(query):
