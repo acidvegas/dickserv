@@ -6,7 +6,6 @@
 
 import re
 
-import config
 import httplib
 
 def check(url):
@@ -14,7 +13,7 @@ def check(url):
 
 def title(url):
     video_id = check(url).group(9)
-    api      = 'http://www.googleapis.com/youtube/v3/videos?key=AIzaSyC6lTRPIY-6P0zcpMggqY9mVEC2ZvXUcas&part=snippet,contentDetails,statistics&id=%s' % video_id
+    api      = 'https://www.googleapis.com/youtube/v3/videos?key=AIzaSyC6lTRPIY-6P0zcpMggqY9mVEC2ZvXUcas&part=snippet,contentDetails,statistics&id=%s' % video_id
     data     = httplib.get_json(api)
     return data['items'][0]['snippet']['title']
 
