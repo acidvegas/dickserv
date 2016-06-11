@@ -113,10 +113,10 @@ class IRC(object):
         try:
             if not msg.startswith('.'):
                 if time.time() - config.last_time > 3:
-                    '''urls = functions.parse_urls(msg)
+                    urls = httplib.parse_urls(msg)
                     if urls:
                         config.last_time = time.time()
-                        self.event_url(chan, urls[0])'''
+                        self.event_url(chan, urls[0])
                 if   'qhat' in msg                    : self.sendmsg(chan, 'Q:)')
                 elif msg == 'h' and functions.lucky() : self.sendmsg(chan, 'h')
                 elif msg == '@help':
@@ -129,24 +129,34 @@ class IRC(object):
                 if time.time() - config.last_time < 3:
                     self.sendmsg(chan, color('Slow down nerd!', red))
                 elif not args:
-                    if   cmd == 'btc'     : self.sendmsg(chan, '%s - %s' % (color('BTC', orange), cryptocurrency.btc()))
-                    elif cmd == 'date'    : self.sendmsg(chan, functions.date())
-                    elif cmd == 'dickserv': self.sendmsg(chan, bold + 'DickServ IRC Bot - Developed by AK in Python 3.5 - https://github.com/acidvegas/dickserv/')
-                    elif cmd == 'fml'     : self.sendmsg(chan, '%s - %s' % (color('FML', black, cyan), fml.lookup()))
-                    elif cmd == 'ltc'     : self.sendmsg(chan, '%s - %s' % (color('LTC', grey), cryptocurrency.ltc()))
-                    elif cmd == 'talent'  :
+                    if   cmd == 'btc'      : self.sendmsg(chan, '%s - %s' % (color('BTC', orange), cryptocurrency.btc()))
+                    elif cmd == 'date'     : self.sendmsg(chan, functions.date())
+                    elif cmd == 'dickserv' : self.sendmsg(chan, bold + 'DickServ IRC Bot - Developed by AK in Python 3.5 - https://github.com/acidvegas/dickserv/')
+                    elif cmd == 'fml'      : self.sendmsg(chan, '%s - %s' % (color('FML', black, cyan), fml.lookup()))
+                    elif cmd == 'ltc'      : self.sendmsg(chan, '%s - %s' % (color('LTC', grey), cryptocurrency.ltc()))
+                    elif cmd == 'talent'   :
                         if functions.random_int(1,1000) == 420:
                             self.sendmsg(chan, color('HOLY FUCKING TALENT PANTS !!! ANAL TALENT ACQUIRED!!! XDD XDD', red, blue))
                         else:
                             self.sendmsg(chan, color('(^)', 'random'))
-                    #elif cmd == 'todo'    : todo.read(chan)
-                    elif cmd == 'uptime'  : self.sendmsg(chan, functions.uptime())
+                    elif cmd == 'todo'   : self.error(chan, 'Not done...') #todo.read(chan)
+                    elif cmd == 'uptime' : self.sendmsg(chan, functions.uptime())
                 else:
-                    if   cmd == 'define'  :
+                    if cmd == 'ascii':
+                        lines = ascii.read(args)
+                        if lines:
+                            if len(lines) > 50 and chan != '#scroll':
+                                self.error(chan, 'File is too big. Take it to #scroll bo.')
+                            else:
+                                for line in lines:
+                                    self.sendmsg(chan, line)
+                        else:
+                            self.error(chan, 'Invalid file name. ' + color('(Use ".ascii list" for a list of valid file names.)', grey))
+                    elif cmd == 'define':
                         definition = dictionary.scrabble(args)
                         if definition : self.sendmsg(chan, '%s - %s: %s' % (color('Definition', white, blue), args.lower(), definition))
                         else          : self.error(chan, 'No results found.')
-                    #elif cmd == 'g'       : google.search(chan, args)
+                    elif cmd == 'g'       : self.error(chan, 'Not done...') #google.search(chan, args)
                     elif cmd == 'imdb'    :
                         api = imdb.search(args)
                         if api:
@@ -168,8 +178,8 @@ class IRC(object):
                             count = str(data.index(i)+1)
                             self.sendmsg(chan, '%s %s %s%s%s%s%s' % (color('[' + str(count) + ']', pink), functions.trim(i, 70), color('[%s|' % str(api[i]['score']), white), color('+' + str(api[i]['ups']), green), color('/', white), color('-' + str(api[i]['downs']), red), color(']', white)))
                             self.sendmsg(chan, ' - ' + color(api[i]['url'], grey))
-                    #elif cmd == 'todo' and args.split()[0] == 'add' : todo.add(chan, nick, args)
-                    #elif cmd == 'todo' and args.split()[0] == 'del' : todo.delete(chan, nick, args)
+                    elif cmd == 'todo' and args.split()[0] == 'add' : self.error(chan, 'Not done...') #todo.add(chan, nick, args)
+                    elif cmd == 'todo' and args.split()[0] == 'del' : self.error(chan, 'Not done...') #todo.delete(chan, nick, args)
                     elif cmd == 'ud'      :
                         definition = dictionary.urban(args)
                         if definition : self.sendmsg(chan, '%s%s - %s: %s' % (color('urban', white, blue), color('DICTIONARY', yellow, black), args, definition))
@@ -202,11 +212,11 @@ class IRC(object):
         try:
             if youtube.check(url):
                 title = youtube.title(url)
-                self.sendmsg(chan, '%s%s %s - %s' % (color('You', black, white), color('Tube', white, red), bold, title))
+                self.sendmsg(chan, '%s%s %s%s' % (color('You', black, white), color('Tube', white, red), bold, title))
             else:
-                title    = httplib.get_title(url)
-                url_type = httplib.get_type(url)
-                self.sendmsg(chan, '[%s] %s' % (color(url_type, pink), title))
+                if httplib.get_type(url) == 'text/html':
+                    title = httplib.get_title(url)
+                    self.sendmsg(chan, '[%s] %s' % (color('text/html', pink), title))
         except Exception as ex:
             debug.error('Title Error', ex)
 
@@ -217,15 +227,12 @@ class IRC(object):
         elif args[1] == '433'  :
             self.nickname = self.nickname + '_'
             self.nick(self.nickname)
-        elif args[1] in ('INVITE', 'JOIN', 'KICK', 'MODE', 'NICK', 'PART', 'PRIVMSG', 'QUIT', 'TOPIC'):
+        elif args[1] in ('JOIN', 'KICK', 'PART', 'PRIVMSG', 'QUIT'):
             name = args[0].split('!')[0][1:]
-            if   args[1] != 'MODE'        : host = args[0].split('!')[1].split('@')[1]
-            elif args[2] != self.nickname : host = args[0].split('!')[1].split('@')[1]
+            user = args[0].split('@')[0].split('!')[1]
+            host = args[0].split('@')[1]
             if name != self.nickname:
-                if args[1] == 'INVITE':
-                    chan = args[3][1:]
-                    self.event_invite(name, chan)
-                elif args[1] == 'JOIN':
+                if args[1] == 'JOIN':
                     chan = args[2][1:]
                     self.event_join(name, chan)
                 elif args[1] == 'KICK':
@@ -233,13 +240,6 @@ class IRC(object):
                     kicked = args[3]
                     reason = data.split(kicked + ' :')[1]
                     self.event_kick(name, chan, kicked, reason)
-                elif args[1] == 'MODE':
-                    chan = args[2]
-                    mode = data.split('MODE ' + chan + ' ')[1]
-                    self.event_mode(name, chan, mode)
-                elif args[1] == 'NICK':
-                    new = args[2][1:]
-                    self.event_nick(name, new)
                 elif args[1] == 'PART':
                     chan   = args[2]
                     reason = data.split(chan + ' :')[1]
@@ -248,15 +248,13 @@ class IRC(object):
                     host = args[0].split('!')[1].split('@')[1]
                     chan = args[2]
                     msg  = data.split(args[1] + ' ' + chan + ' :')[1]
-                    if   chan == self.nickname : self.event_private(name, host, msg)
-                    else                       : self.event_message(name, host, chan, msg)
+                    if chan == self.nickname:
+                        self.event_private(name, host, msg)
+                    else:
+                        self.event_message(name, host, chan, msg)
                 elif args[1] == 'QUIT':
                     reason = data.split('QUIT :')[1]
                     self.event_quit(name, reason)
-                elif args[1] == 'TOPIC':
-                    chan  = args[2]
-                    topic = data.split('TOPIC ' + chan + ' :')[1]
-                    self.event_topic(name, chan, topic)
 
     def identify(self, username, password):
         self.sendmsg('nickserv', 'identify %s %s' % (username, password))
@@ -264,7 +262,7 @@ class IRC(object):
     def join(self, chan, key=None):
         if key : self.raw('JOIN %s %s' % (chan, key))
         else   : self.raw('JOIN ' + chan)
-        self.sendmsg(chan, 'Hello, I am the %s, type %s@help%s for a list of commands.' % (color('DickServ', pink), bold, reset))
+        self.sendmsg(chan, 'Hello, I am the %s, type %s for a list of commands.' % (color('DickServ', pink), color('@help', white)))
 
     def listen(self):
         while True:
@@ -294,10 +292,6 @@ class IRC(object):
         
     def oper(self, nick, password):
         self.raw('OPER %s %s' % (nick, password))
-        
-    def part(self, chan, msg=None):
-        if msg : self.raw('PART %s %s' % (chan, msg))
-        else   : self.raw('PART ' + chan)
 
     def quit(self, msg=None):
         if msg : self.raw('QUIT :' + msg)
