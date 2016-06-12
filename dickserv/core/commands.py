@@ -11,5 +11,6 @@ import fml
 import imdb
 import isup
 import reddit
+import tpb
 import wolfram
 import youtube
