@@ -10,8 +10,8 @@ import httplib
 def read(subreddit):
     api     = httplib.get_json('http://www.reddit.com/r/' + subreddit + '.json?limit=10')
     data    = [x['data'] for x in api['data']['children']]
-    results = {}
     if data:
+        results = {}
         for item in data:
             if not item['stickied']:
                 results[item['title']] = {'url':item['url'], 'score':item['score'], 'ups':item['ups'], 'downs':item['downs']}
