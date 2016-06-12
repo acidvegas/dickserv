@@ -129,18 +129,25 @@ class IRC(object):
                 if time.time() - config.last_time < 3:
                     self.sendmsg(chan, color('Slow down nerd!', red))
                 elif not args:
-                    if   cmd == 'btc'      : self.sendmsg(chan, '%s - %s' % (color('BTC', orange), cryptocurrency.btc()))
-                    elif cmd == 'date'     : self.sendmsg(chan, functions.date())
-                    elif cmd == 'dickserv' : self.sendmsg(chan, bold + 'DickServ IRC Bot - Developed by AK in Python 3.5 - https://github.com/acidvegas/dickserv/')
-                    elif cmd == 'fml'      : self.sendmsg(chan, '%s - %s' % (color('FML', black, cyan), fml.lookup()))
-                    elif cmd == 'ltc'      : self.sendmsg(chan, '%s - %s' % (color('LTC', grey), cryptocurrency.ltc()))
-                    elif cmd == 'talent'   :
+                    if cmd == 'btc':
+                        self.sendmsg(chan, '%s - %s' % (color('BTC', orange), cryptocurrency.btc()))
+                    elif cmd == 'date':
+                        self.sendmsg(chan, functions.date())
+                    elif cmd == 'dickserv':
+                        self.sendmsg(chan, bold + 'DickServ IRC Bot - Developed by AK in Python 3.5 - https://github.com/acidvegas/dickserv/')
+                    elif cmd == 'fml':
+                        self.sendmsg(chan, '%s - %s' % (color('FML', black, cyan), fml.lookup()))
+                    elif cmd == 'ltc':
+                        self.sendmsg(chan, '%s - %s' % (color('LTC', grey), cryptocurrency.ltc()))
+                    elif cmd == 'talent':
                         if functions.random_int(1,1000) == 420:
                             self.sendmsg(chan, color('HOLY FUCKING TALENT PANTS !!! ANAL TALENT ACQUIRED!!! XDD XDD', red, blue))
                         else:
                             self.sendmsg(chan, color('(^)', 'random'))
-                    elif cmd == 'todo'   : self.error(chan, 'Not done...') #todo.read(chan)
-                    elif cmd == 'uptime' : self.sendmsg(chan, functions.uptime())
+                    elif cmd == 'todo':
+                        self.error(chan, 'Not done...') #todo.read(chan)
+                    elif cmd == 'uptime':
+                        self.sendmsg(chan, functions.uptime())
                 else:
                     if cmd == 'ascii':
                         lines = ascii.read(args)
@@ -156,8 +163,9 @@ class IRC(object):
                         definition = dictionary.scrabble(args)
                         if definition : self.sendmsg(chan, '%s - %s: %s' % (color('Definition', white, blue), args.lower(), definition))
                         else          : self.error(chan, 'No results found.')
-                    elif cmd == 'g'       : self.error(chan, 'Not done...') #google.search(chan, args)
-                    elif cmd == 'imdb'    :
+                    elif cmd == 'g':
+                        self.error(chan, 'Not done...') #google.search(chan, args)
+                    elif cmd == 'imdb':
                         api = imdb.search(args)
                         if api:
                             self.sendmsg(chan, '%sTitle       :%s %s' % (bold, reset, color('%s %s %s' % (api['Title'], api['Rated'], api['Year']), grey)))
@@ -170,25 +178,41 @@ class IRC(object):
                                 prefix = '             '
                         else:
                             self.error(chan, 'No results found.')
-                    elif cmd == 'isup'    : self.sendmsg(chan, '%s is %s' % (args, isup.check(args)))
-                    elif cmd == 'reddit'  :
+                    elif cmd == 'isup':
+                        self.sendmsg(chan, '%s is %s' % (args, isup.check(args)))
+                    elif cmd == 'reddit':
                         api  = reddit.read(args)
-                        data = list(api.keys())
-                        for i in data:
-                            count = str(data.index(i)+1)
-                            self.sendmsg(chan, '%s %s %s%s%s%s%s' % (color('[' + str(count) + ']', pink), functions.trim(i, 70), color('[%s|' % str(api[i]['score']), white), color('+' + str(api[i]['ups']), green), color('/', white), color('-' + str(api[i]['downs']), red), color(']', white)))
-                            self.sendmsg(chan, ' - ' + color(api[i]['url'], grey))
-                    elif cmd == 'todo' and args.split()[0] == 'add' : self.error(chan, 'Not done...') #todo.add(chan, nick, args)
-                    elif cmd == 'todo' and args.split()[0] == 'del' : self.error(chan, 'Not done...') #todo.delete(chan, nick, args)
-                    elif cmd == 'ud'      :
+                        if api:
+                            data = list(api.keys())
+                            for i in data:
+                                count = str(data.index(i)+1)
+                                self.sendmsg(chan, '%s %s %s%s%s%s%s' % (color('[' + str(count) + ']', pink), functions.trim(i, 70), color('[%s|' % str(api[i]['score']), white), color('+' + str(api[i]['ups']), green), color('/', white), color('-' + str(api[i]['downs']), red), color(']', white)))
+                                self.sendmsg(chan, ' - ' + color(api[i]['url'], grey))
+                        else:
+                            self.error(chan, 'No results found.')
+                    elif cmd == 'todo' and args.split()[0] == 'add':
+                        self.error(chan, 'Not done...') #todo.add(chan, nick, args)
+                    elif cmd == 'todo' and args.split()[0] == 'del':
+                        self.error(chan, 'Not done...') #todo.delete(chan, nick, args)
+                    elif cmd == 'tpb':
+                        api  = tpb.search(args)
+                        if api:
+                            data = list(api.keys())
+                            for i in data:
+                                count = str(data.index(i)+1)
+                                self.sendmsg(chan, '%s %s %s%s%s%s%s' % (color('[' + str(count) + ']', pink), i, color('[', white), color(api[i]['seeders'], green), color('|', white), color(api[i]['leechers'], red), color(']', white)))
+                                self.sendmsg(chan, ' -  %s' % color(api[i]['url'], grey))
+                        else:
+                            self.error(chan, 'No results found.')
+                    elif cmd == 'ud':
                         definition = dictionary.urban(args)
                         if definition : self.sendmsg(chan, '%s%s - %s: %s' % (color('urban', white, blue), color('DICTIONARY', yellow, black), args, definition))
                         else          : self.error(chan, 'No results found.')
-                    elif cmd == 'wolfram' :
+                    elif cmd == 'wolfram':
                         results = wolfram.ask(args)
                         if results : self.sendmsg(chan, '%s%s - %s' % (color('Wolfram', red), color('Alpha', orange), results))
                         else       : self.error(chan, 'No results found.')
-                    elif cmd == 'yt' :
+                    elif cmd == 'yt':
                         api  = youtube.search(args)
                         data = list(api.keys())
                         for i in data:
