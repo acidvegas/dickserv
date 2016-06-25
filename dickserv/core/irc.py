@@ -178,6 +178,12 @@ class IRC(object):
                                 prefix = '             '
                         else:
                             self.error(chan, 'No results found.')
+                    elif cmd == 'isgd':
+                        api = shorturl.isgd(args)
+                        if api:
+                            self.sendmsg(chan, '%s%s %s' % (color('is', white, red), color('.gd', yellow, red), api))
+                        else:
+                            self.error(chan, 'Invalid URL.')
                     elif cmd == 'isup':
                         self.sendmsg(chan, '%s is %s' % (args, isup.check(args)))
                     elif cmd == 'reddit':
@@ -195,6 +201,8 @@ class IRC(object):
                             self.sendmsg(chan, resolve.host(args))
                         else:
                             self.sendmsg(chan, resolve.url(functions.clean_url(args)))
+                    elif cmd == 'tinyurl':
+                        self.sendmsg(chan, '%s %s' % (color('TinyURL', white, blue), shorturl.tinyurl(args))
                     elif cmd == 'todo' and args.split()[0] == 'add':
                         self.error(chan, 'Not done...') #todo.add(chan, nick, args)
                     elif cmd == 'todo' and args.split()[0] == 'del':
