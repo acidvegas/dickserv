@@ -60,10 +60,13 @@ def help():
 .fml                Random \'FuckMyLife\' story.
 .g <query>          Search <query> on Google.
 .imdb <query>       Search IMDb and return the 1st result for <search>.
+.isgd <url>         Shorten <url> to an IsGd URL.
 .isup <url>         Check if <url> is up or not.
 .ltc                Litecoin rate in USD.
 .reddit <subreddit> Read top posts from <subreddit>
+.resolve <ip/url>   Resolve <ip/url> to a hostname or IP address.
 .talent             RIP DITTLE DIP DIP DIP DIP IT\'S YA BIRTHDAY!!1@11!
+.tinyurl <url>      Shorten <url> to a TinyURL URL.
 .todo               Read all the To DO entries for your nick.
 .todo add <string>  Add a new To Do entry.
 .todo del <number>  Delete the <number> To Do entry.
