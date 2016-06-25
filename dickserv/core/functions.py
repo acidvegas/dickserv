@@ -11,6 +11,9 @@ import time
 
 import config
 
+def check_ip(ip):
+    return re.match('^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$', ip)
+
 def clean_whitespace(string):
     while '  ' in string:
         string = string.replace('  ', ' ')
