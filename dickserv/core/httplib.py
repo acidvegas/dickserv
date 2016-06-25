@@ -24,8 +24,19 @@ def data_quote(data):
 def data_encode(data):
     return urllib.parse.urlencode(data)
 
+def get_file(url):
+    return os.path.basename(url)
+
 def get_json(url):
     return json.loads(get_source(url))
+
+def get_size(url):
+    content_length = int(get_url(url).getheader('content-length'))
+    for unit in ['B','KB','MB','GB','TB','PB','EB','ZB']:
+        if abs(content_length) < 1024.0:
+            return '%d%s' % (content_length, unit)
+        content_length /= 1024.0
+    return '%d%s' % (content_length, 'YB')
 
 def get_source(url, data=None):
     source = get_url(url, data)
