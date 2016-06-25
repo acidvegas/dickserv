@@ -193,10 +193,8 @@ class IRC(object):
                     elif cmd == 'resolve':
                         if functions.check_ip(args):
                             self.sendmsg(chan, resolve.host(args))
-                        elif httplib.parse_urls(args):
-                            self.sendmsg(chan, resolve.url(functions.clean_url(args)))
                         else:
-                            self.error(chan, 'Invalid IP/URL.')
+                            self.sendmsg(chan, resolve.url(functions.clean_url(args)))
                     elif cmd == 'todo' and args.split()[0] == 'add':
                         self.error(chan, 'Not done...') #todo.add(chan, nick, args)
                     elif cmd == 'todo' and args.split()[0] == 'del':
