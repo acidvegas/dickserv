@@ -202,7 +202,7 @@ class IRC(object):
                         else:
                             self.sendmsg(chan, resolve.url(functions.clean_url(args)))
                     elif cmd == 'tinyurl':
-                        self.sendmsg(chan, '%s %s' % (color('TinyURL', white, blue), shorturl.tinyurl(args))
+                        self.sendmsg(chan, '%s %s' % (color('TinyURL', white, blue), shorturl.tinyurl(args)))
                     elif cmd == 'todo' and args.split()[0] == 'add':
                         self.error(chan, 'Not done...') #todo.add(chan, nick, args)
                     elif cmd == 'todo' and args.split()[0] == 'del':
