@@ -193,7 +193,7 @@ class IRC(object):
                     elif cmd == 'resolve':
                         if functions.check_ip(args):
                             self.sendmsg(chan, resolve.host(args))
-                        elif httplib.parse_urls(msg):
+                        elif httplib.parse_urls(args):
                             self.sendmsg(chan, resolve.url(functions.clean_url(args)))
                         else:
                             self.error(chan, 'Invalid IP/URL.')
