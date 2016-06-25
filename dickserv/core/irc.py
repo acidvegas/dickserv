@@ -238,11 +238,15 @@ class IRC(object):
                 title = youtube.title(url)
                 self.sendmsg(chan, '%s%s %s%s' % (color('You', black, white), color('Tube', white, red), bold, title))
             else:
-                if httplib.get_type(url) == 'text/html':
+                url_type = httplib.get_type(url)
+                if url_type == 'text/html':
                     title = httplib.get_title(url)
-                    self.sendmsg(chan, '[%s] %s' % (color('text/html', pink), title))
-        except Exception as ex:
-            debug.error('Title Error', ex)
+                    self.sendmsg(chan, '[%s] %s' % (color(url_type, pink), title))
+                else:
+                    file_name = httplib.get_file(url)
+                    if file_name:
+                        file_size = httplib.get_size(url)
+                        self.sendmsg(chan, '[%s] %s [%s]' % (color(url_type, pink), file_name, color(file_size, blue)))
 
     def handle_events(self, data):
         args = data.split()
