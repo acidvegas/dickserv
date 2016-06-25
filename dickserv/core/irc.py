@@ -247,6 +247,8 @@ class IRC(object):
                     if file_name:
                         file_size = httplib.get_size(url)
                         self.sendmsg(chan, '[%s] %s [%s]' % (color(url_type, pink), file_name, color(file_size, blue)))
+        except Exception as ex:
+            debug.error('Title Error', ex)
 
     def handle_events(self, data):
         args = data.split()
