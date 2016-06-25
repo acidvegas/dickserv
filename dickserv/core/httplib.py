@@ -5,6 +5,7 @@
 # httplib.py
 
 import json
+import os
 import re
 import urllib.parse
 import urllib.request
