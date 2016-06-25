@@ -12,6 +12,7 @@ import imdb
 import isup
 import reddit
 import resolve
+import shorturl
 import tpb
 import wolfram
 import youtube
