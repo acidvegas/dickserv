@@ -11,6 +11,7 @@ import fml
 import imdb
 import isup
 import reddit
+import resolve
 import tpb
 import wolfram
 import youtube
