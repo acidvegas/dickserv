@@ -17,7 +17,8 @@ import functions
 def clean_url(url):
     for prefix in ['http://', 'https://', 'www.']:
         url = url.replace(prefix, '', 1)
-    return 'http://' + url
+    if url[-1:] == '/': url = url[:-1]
+    return url
 
 def data_quote(data):
     return urllib.parse.quote(data)
