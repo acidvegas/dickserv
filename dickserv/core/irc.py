@@ -134,7 +134,7 @@ class IRC(object):
                     elif cmd == 'date':
                         self.sendmsg(chan, functions.date())
                     elif cmd == 'dickserv':
-                        self.sendmsg(chan, bold + 'DickServ IRC Bot - Developed by AK in Python 3.5 - https://github.com/acidvegas/dickserv/')
+                        self.sendmsg(chan, bold + 'DickServ IRC Bot - Developed by acidvegas in Python 3 - https://github.com/acidvegas/dickserv/')
                     elif cmd == 'fml':
                         self.sendmsg(chan, '%s - %s' % (color('FML', black, cyan), fml.lookup()))
                     elif cmd == 'ltc':
