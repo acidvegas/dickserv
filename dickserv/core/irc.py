@@ -59,7 +59,6 @@ class IRC(object):
         self.sock     = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         
     def connect(self):
-        print(self.channel)
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.sock = ssl.wrap_socket(self.sock)
