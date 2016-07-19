@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-# DickServ IRC Bot
-# Developed by acidvegas in Python 3.5
+# DickServ IRC Service Bot
+# Developed by acidvegas in Python 3
 # https://github.com/acidvegas/dickserv/
 # isup.py
 
