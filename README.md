@@ -7,25 +7,28 @@ A bot with many useful commands &amp; features for the Internet Relay Chat (IRC)
 ###### Config
 Browse to the */core/* folder and edit your *config.py* file.
 
-**Note:** The key, password, nickserv, and operserv configs can be set to None (No quotations) to disbale it.
-
 ###### Commands
 | Command | Description |
 | --- | --- |
 | @help | Information about the commands. |
 | .ascii list | A list of all the ASCII art files. |
+| .ascii random | Display a random ASCII art file. |
 | .ascii \<name> | Display the <name> ASCII art file. |
 | .btc | Bitcoin rate in USD. |
 | .date | Get the current date and time. |
 | .define \<word> | Get the definition of <word>. |
 | .dickserv | Information about the bot. |
-| .fml | Random \'FuckMyLife\' story. |
+| .filter enable | Enable word filters. (+G) |
+| .filter disable | Disable word filters. (-G) |
+| .flood enable | Enable channel message flooding. (-f) |
+| .flood disable | Disable channel message flooding. (+f) |
+| .geoip <ip> | Geographical location information about <ip>. |
 | .g \<query> | Search <query> on Google. |
 | .imdb \<query> | Search IMDb and return the 1st result for <search>. |
 | .isgd \<url> | Shorten <url> to an IsGd URL. |
 | .isup \<url> | Check if <url> is up or not. |
 | .ltc | Litecoin rate in USD. |
-| .reddit \<subreddit> | Read top posts from <subreddit> |
+| .r \<subreddit> | Read top posts from <subreddit> |
 | .resolve \<ip/url> | Resolve a <ip/url> to a hostname or IP address.
 | .talent | RIP DITTLE DIP DIP DIP DIP IT\'S YA BIRTHDAY!!1@11! |
 | .tinyurl \<url> | Shorten <url> to a TinyURL URL. |
@@ -42,3 +45,4 @@ Browse to the */core/* folder and edit your *config.py* file.
 - Use sqlite3 databases for todo managment. (Max of 3 entrees per-nick, 15 todo's max.)
 - Add admin only commands via PM that checks for a certain user@host mask. (ignore, say, act, etc...)
 - Baisc channel management to replace ChanServ.
+- IRCd update checker via timers.
