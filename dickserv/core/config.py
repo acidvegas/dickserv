@@ -4,21 +4,13 @@
 # https://github.com/acidvegas/dickserv/
 # config.py
 
-# Connection
+# IRC Settings
 server   = 'localhost'
 port     = 6697
-channel  = '#chats'
+channel  = '#dev'
+password = 'CHANGEME'
 
-# Identity
-nickname = 'DickServ'
-username = 'dickserv'
-realname = 'DickServ IRC Bot'
-
-# Authentication
-nickserv = None
-operserv = None
-
-# Other
+# Other Settings
 admin_host   = 'admin.host'
 
 # DO NOT EDIT
