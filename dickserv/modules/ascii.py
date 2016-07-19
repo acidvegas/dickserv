@@ -17,6 +17,6 @@ def read(file_name):
     else:
         ascii_file = '%s/%s.txt' % (ascii_dir, file_name)
     if os.path.isfile(ascii_file):
-        return open(ascii_file, 'r').readlines() + [ascii_file.replace('/home/super/bots/dickserv/dickserv/data/ascii/', '', 1),]
+        return open(ascii_file, 'r').readlines()
     else:
         return False
