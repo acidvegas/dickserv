@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # DickServ IRC Bot
-# Developed by acidvegas in Python 2 & 3
+# Developed by acidvegas in Python 3
 # https://github.com/acidvegas/dickserv/
 # tpb.py
 
@@ -9,7 +9,7 @@ import re
 import httplib
 
 def search(query):
-    url      = 'http://thepiratebay.org/search/' + query.replace(' ', '+') + '/0/99/0'
+    url      = 'https://thepiratebay.org/search/' + query.replace(' ', '+') + '/0/99/0'
     source   = httplib.get_source(url)
     torrents = re.findall('<a href="(.*?)" class="detLink".*>(.*?)</a>', source)
     seeders  = re.findall('\t\t</td>\n\t\t<td align="right">(.*?)</td>', source)
