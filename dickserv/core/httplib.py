@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # DickServ IRC Bot
-# Developed by acidvegas in Python 3.5
+# Developed by acidvegas in Python 3
 # https://github.com/acidvegas/dickserv/
 # httplib.py
 
@@ -26,6 +26,9 @@ def data_quote(data):
 def data_encode(data):
     return urllib.parse.urlencode(data)
 
+def download(url, save_path):
+    urllib.request.urlretrieve(url, save_path)
+
 def get_file(url):
     return os.path.basename(url)
 
@@ -41,12 +44,12 @@ def get_size(url):
     return '%d%s' % (content_length, 'YB')
 
 def get_source(url, data=None):
-    source = get_url(url, data)
+    source  = get_url(url, data)
     charset = source.headers.get_content_charset()
     if charset:
         return source.read().decode(charset)
     else:
-        return source.read()
+        return source.read().decode()
     
 def get_title(url):
     source = get_source(url)
