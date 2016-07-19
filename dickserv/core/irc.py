@@ -47,15 +47,14 @@ def color(msg, foreground, background=None):
     else          : return '%s%s%s%s'    % (colour, foreground, msg, reset)
 
 class IRC(object):
-    def __init__(self, server, port, channel, nickname, username, realname, nickserv, operserv):
+    def __init__(self, server, port, channel, password):
         self.server   = server
         self.port     = port
         self.channel  = channel
-        self.nickname = nickname
-        self.username = username
-        self.realname = realname
-        self.nickserv = nickserv
-        self.operserv = operserv
+        self.nickname = 'DickServ'
+        self.username = 'dickserv'
+        self.realname = 'DickServ IRC Bot'
+        self.password = password
         self.sock     = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         
     def connect(self):
@@ -84,8 +83,7 @@ class IRC(object):
             
     def event_connect(self):
         config.start_time = time.time()
-        if self.nickserv : self.identify(self.username, self.nickserv)
-        if self.operserv : self.oper(self.username, self.operserv)
+        self.oper(self.username, self.password)
         self.mode(self.nickname, '+B')
         self.join()
         
@@ -269,9 +267,6 @@ class IRC(object):
                 elif chan.startswith('#'):
                     self.part(chan)
 
-    def identify(self, username, password):
-        self.sendmsg('nickserv', 'identify %s %s' % (username, password))
-
     def join(self):
         self.raw('JOIN ' + self.channel)
         self.mode(self.channel, '+q ' + self.nickname)
@@ -295,7 +290,6 @@ class IRC(object):
         self.event_disconnect()
 
     def mode(self, target, mode):
-        print('MODE %s %s' % (target, mode))
         self.raw('MODE %s %s' % (target, mode))
         
     def notice(self, target, msg):
@@ -313,4 +307,4 @@ class IRC(object):
     def sendmsg(self, msg):
         self.raw('PRIVMSG %s :%s' % (self.channel, msg))
 
-DickServ = IRC(config.server, config.port, config.channel, config.nickname, config.username, config.realname, config.nickserv, config.operserv)
+DickServ = IRC(config.server, config.port, config.channel, config.password)
