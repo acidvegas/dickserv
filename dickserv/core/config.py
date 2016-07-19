@@ -1,26 +1,26 @@
 #!/usr/bin/env python
 # DickServ IRC Bot
-# Developed by acidvegas in Python 3.5
+# Developed by acidvegas in Python 3
 # https://github.com/acidvegas/dickserv/
 # config.py
 
-#IRC Server Information
-server  = 'irc.server.com'
-port    = 6697
-use_ssl = True
-channel = '#dev'
-key     = None
+# Connection
+server   = 'localhost'
+port     = 6697
+channel  = '#chats'
 
-#IRC Identity Information
+# Identity
 nickname = 'DickServ'
 username = 'dickserv'
-realname = 'Dickserv IRC Bot'
-password = None
+realname = 'DickServ IRC Bot'
 
-# Login Passwords
+# Authentication
 nickserv = None
 operserv = None
 
-# GLOBALS (DO NOT EDIT)
-start_time = 0
+# Other
+admin_host   = 'admin.host'
+
+# DO NOT EDIT
 last_time  = 0
+start_time = 0
