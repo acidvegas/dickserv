@@ -8,6 +8,8 @@ import os
 import sys
 import time
 
+import config
+
 def check_libs():
     try                : import bs4
     except ImportError : error_exit('Missing required \'bs4\' library. (https://pypi.python.org/pypi/beautifulsoup4)')
@@ -47,30 +49,27 @@ def get_time():
     return time.strftime('%I:%M:%S')
 
 def help():
-    return '''@help               Information about the commands.
-.ascii list         A list of all the ASCII art files.
-.ascii random       Display a random ASCII art file.
-.ascii <name>       Display the <name> ASCII art file.
-.btc                Bitcoin rate in USD.
-.date               Get the current date and time.
-.define <word>      Get the definition of <word>.
-.dickserv           Information about the bot.
-.filter enable      Enable word filters.
-.filter disable     Disable word filters.
-.g <query>          Search <query> on Google.
-.geoip <ip>         Geographical location information about <ip>.
-.imdb <query>       Search IMDb and return the 1st result for <search>.
-.isup <url>         Check if <url> is up or not.
-.ltc                Litecoin rate in USD.
-.r <subreddit>      Read top posts from <subreddit>
-.resolve <ip/url>   Resolve <ip/url> to a hostname or IP address.
-.talent             RIP DITTLE DIP DIP DIP DIP IT\'S YA BIRTHDAY!!1@11!
-.todo               Read all the To DO entries for your nick.
-.todo add <string>  Add a new To Do entry.
-.todo del <number>  Delete the <number> To Do entry.
-.ud <word>          Get the urban dictionary definition of <word>.
-.uptime             Get the amount of time DickServ has been running.
-.wolfram <ask>      Get the results of <query> from WolframAlpha.
+    return '''@help                 Information about the commands.
+.ascii list           A list of all the ASCII art files.
+.ascii random         Display a random ASCII art file.
+.ascii <name>         Display the <name> ASCII art file.
+.btc                  Bitcoin rate in USD.
+.date                 Get the current date and time.
+.define <word>        Get the definition of <word>.
+.dickserv             Information about the bot.
+.filter enable        Enable word filters.
+.filter disable       Disable word filters.
+.geoip <ip>           Geographical location information about <ip>.
+.imdb <query>         Search IMDb and return the 1st result for <search>.
+.isup <url>           Check if <url> is up or not.
+.ltc                  Litecoin rate in USD.
+.r <subreddit>        Read top posts from <subreddit>
+.remind <time> <text> Remind yourself about <text> in <time>.
+.resolve <ip/url>     Resolve <ip/url> to a hostname or IP address.
+.talent               RIP DITTLE DIP DIP DIP DIP IT\'S YA BIRTHDAY!!1@11!
+.ud <word>            Get the urban dictionary definition of <word>.
+.uptime               Get the amount of time DickServ has been running.
+.wolfram <ask>        Get the results of <query> from WolframAlpha.
 .yt <query>         Search <query> on YouTube.'''
 
 def info():
@@ -91,3 +90,11 @@ def keep_alive():
         while True : input('')
     except KeyboardInterrupt:
         sys.exit()
+
+def load_reminders():
+    reminder_file = os.getcwd() + '/data/reminders.txt'
+    if os.path.isfile(reminder_file):
+        with open(reminder_file, 'r') as r:
+            lines = list_file.read().splitlines()
+            for line in [x for x in lines if x]:
+                config.reminders.append(line)
