@@ -56,7 +56,12 @@ class IRC(object):
         self.realname = 'DickServ IRC Bot'
         self.password = password
         self.sock     = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        
+
+    def startup(self):
+        reminder.loop().start()
+        unreal.loop().start()
+        self.connect()
+
     def connect(self):
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -84,12 +89,11 @@ class IRC(object):
     def event_connect(self):
         config.start_time = time.time()
         self.oper(self.username, self.password)
-        self.mode(self.nickname, '+B')
         self.join()
         
     def event_disconnect(self):
         self.disconnect()
-        time.sleep(5)
+        time.sleep(10)
         self.connect()
         
     def event_join(self, nick):
@@ -128,15 +132,23 @@ class IRC(object):
                     elif cmd == 'uptime'   : self.sendmsg(functions.uptime())
                 else:
                     if cmd == 'ascii':
-                        lines = ascii.read(args)
-                        if lines:
-                            if len(lines) > 50:
-                                self.error('File is too big.', 'Take it to %s bo.' % color('#scroll', light_blue))
-                            else:
-                                for line in lines:
-                                    self.sendmsg(line)
+                        split = args.split()
+                        if split[0] == 'delete' and len(split)== 2 and host == config.admin_host:
+                            ascii.delete(split[1])
+                            self.sendmsg('File deleted.')
+                        elif split[0] == 'rename' and len(split) == 3 and host == config.admin_host:
+                            ascii.rename(split[1], split[2])
+                            self.sendmsg('File renamed.')
                         else:
-                            self.error('Invalid file name.', 'Use ".ascii list" for a list of valid file names.')
+                            lines = ascii.read(args)
+                            if lines:
+                                if len(lines) > 50:
+                                    self.error('File is too big.', 'Take it to %s bo.' % color('#scroll', light_blue))
+                                else:
+                                    for line in lines:
+                                        self.sendmsg(line)
+                            else:
+                                self.error('Invalid file name.', 'Use ".ascii list" for a list of valid file names.')
                     elif cmd == 'define':
                         definition = dictionary.scrabble(args)
                         if definition : self.sendmsg('%s - %s: %s' % (color('Definition', white, blue), args.lower(), definition))
@@ -176,7 +188,7 @@ class IRC(object):
                     elif cmd == 'isup':
                         self.sendmsg('%s is %s' % (args, isup.check(args)))
                     elif cmd == 'r':
-                        api  = reddit.read(args)
+                        api = reddit.read(args)
                         if api:
                             data = list(api.keys())
                             for i in data:
@@ -185,6 +197,26 @@ class IRC(object):
                                 self.sendmsg(' - ' + color(api[i]['url'], grey))
                         else:
                             self.error('No results found.')
+                    elif cmd == 'remind':
+                        if len(args.split()) >= 2:
+                            duration = args.split()[0][:-1]
+                            type     = args.split()[0][-1:]
+                            data     = args[len(args.split()[0])+1:]
+                            if duration.isdigit():
+                                duration = int(duration)
+                                if duration > 0:
+                                    if (type == 'm' and (duration <= 43200 or duration >= 20)) or (type == 'h' and duration <= 720) or (type == 'd' and duration <= 30):
+                                        if len(config.reminders) < 20:
+                                            reminder.add(nick, duration, type, data)
+                                            self.sendmsg('Added new reminder to the database!')
+                                        else:
+                                            self.error('Too many reminders.', 'The max is 20.')
+                                    else:
+                                        self.error('Invalid arguments.', 'Duration is too high or low for the given type.')
+                            else:
+                                self.error('Invalid arguments.')
+                        else:
+                            self.error('Missing arguments.')
                     elif cmd == 'resolve':
                         if functions.check_ip(args):
                             self.sendmsg(resolve.host(args))
@@ -228,6 +260,9 @@ class IRC(object):
     def event_part(self, nick):
         self.sendmsg('%s %s%s' % (color('BYE', 'random'), bold, nick.upper()))
 
+    def event_quit(self, nick):
+        self.sendmsg('%s %s%s' % (color('BYE', 'random'), bold, nick.upper()))
+
     def event_url(self, url):
         try:
             if youtube.check(url):
@@ -251,21 +286,23 @@ class IRC(object):
         if   args[0] == 'PING' : self.raw('PONG ' + args[1][1:])
         elif args[1] == '003'  : self.event_connect()
         elif args[1] == '433'  : self.event_nick_in_use()
-        elif args[1] in ('JOIN', 'KICK', 'PART', 'PRIVMSG'):
+        elif args[1] in ('JOIN', 'KICK', 'PART', 'PRIVMSG', 'QUIT'):
             name = args[0].split('!')[0][1:]
             if name != self.nickname:
-                chan = args[2]
-                if chan == self.channel or chan[1:] == self.channel:
-                    if   args[1] == 'JOIN' : self.event_join(name)
-                    elif args[1] == 'KICK' : self.event_kick(args[3])
-                    elif args[1] == 'PART' : self.event_part(name)
-                    elif args[1] == 'PRIVMSG':
-                        if chan != self.nickname:
-                            msg  = data.split(args[1] + ' ' + chan + ' :')[1]
-                            host = args[0].split('!')[1].split('@')[1]
-                            self.event_message(name, host, msg)
-                elif chan.startswith('#'):
-                    self.part(chan)
+                if args[1] == 'QUIT': self.event_quit(name)
+                else:
+                    chan = args[2]
+                    if '#' in chan:
+                        if self.channel in chan:
+                            if   args[1] == 'JOIN' : self.event_join(name)
+                            elif args[1] == 'KICK' : self.event_kick(args[3])
+                            elif args[1] == 'PART' : self.event_part(name)
+                            elif args[1] == 'PRIVMSG':
+                                msg  = data.split(args[1] + ' ' + chan + ' :')[1]
+                                host = args[0].split('!')[1].split('@')[1]
+                                self.event_message(name, host, msg)
+                        else:
+                            self.part(chan) 
 
     def join(self):
         self.raw('JOIN ' + self.channel)
