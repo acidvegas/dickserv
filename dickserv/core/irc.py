@@ -210,9 +210,9 @@ class IRC(object):
                                             reminder.add(nick, duration, type, data)
                                             self.sendmsg('Added new reminder to the database!')
                                         else:
-                                            self.error('Too many reminders.', 'The max is 20.')
+                                            self.error('Too many reminders.')
                                     else:
-                                        self.error('Invalid arguments.', 'Duration is too high or low for the given type.')
+                                        self.error('Invalid arguments.')
                             else:
                                 self.error('Invalid arguments.')
                         else:
