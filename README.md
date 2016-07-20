@@ -29,20 +29,15 @@ Browse to the */core/* folder and edit your *config.py* file.
 | .isup \<url> | Check if <url> is up or not. |
 | .ltc | Litecoin rate in USD. |
 | .r \<subreddit> | Read top posts from <subreddit> |
+| .remind <time> <text> | Remind yourself about <text> in <time>.
 | .resolve \<ip/url> | Resolve a <ip/url> to a hostname or IP address.
 | .talent | RIP DITTLE DIP DIP DIP DIP IT\'S YA BIRTHDAY!!1@11! |
 | .tinyurl \<url> | Shorten <url> to a TinyURL URL. |
-| .todo | Read all the To DO entries for your nick. |
-| .todo add \<string> | Add a new To Do entry. |
-| .todo del \<number> | Delete the <number> To Do entry. |
 | .ud \<word> | Get the urban dictionary definition of <word>. |
 | .uptime | Get the amount of time DickServ has been running. |
 | .wolfram \<ask> | Get the results of <query> from WolframAlpha. |
 | .yt \<query> | Search <query> on YouTube. |
 
 ##### ToDo
-- Fix google command.
-- Use sqlite3 databases for todo managment. (Max of 3 entrees per-nick, 15 todo's max.)
-- Add admin only commands via PM that checks for a certain user@host mask. (ignore, say, act, etc...)
-- Baisc channel management to replace ChanServ.
-- IRCd update checker via timers.
+- Fix google command with the new api.
+- Add a quote / tweet command.
