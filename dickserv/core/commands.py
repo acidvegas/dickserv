@@ -11,7 +11,9 @@ import geoip
 import imdb
 import isup
 import reddit
+import reminder
 import resolve
 import tpb
+import unreal
 import wolfram
 import youtube
