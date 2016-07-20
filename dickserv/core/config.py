@@ -11,8 +11,9 @@ channel  = '#dev'
 password = 'CHANGEME'
 
 # Other Settings
-admin_host   = 'admin.host'
+admin_host = 'admin.host'
 
 # DO NOT EDIT
 last_time  = 0
 start_time = 0
+reminders  = []
