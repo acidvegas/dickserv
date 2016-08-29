@@ -17,6 +17,19 @@ def read(file_name):
     else:
         ascii_file = '%s/%s.txt' % (ascii_dir, file_name)
     if os.path.isfile(ascii_file):
-        return open(ascii_file, 'r').readlines()
+        ascii_txt = open(ascii_file, 'r').readlines()
+        if file_name == 'random':
+            return ascii_txt + [os.path.basename(ascii_file),]
+        else:
+            return ascii_txt
     else:
         return False
+
+def delete(file_name):
+    ascii_file = '%s/%s.txt' % (ascii_dir, file_name)
+    os.remove(ascii_file)
+
+def rename(file_name, new_name):
+    ascii_file = '%s/%s.txt' % (ascii_dir, file_name)
+    new_file   = '%s/%s.txt' % (ascii_dir, new_name)
+    os.rename(ascii_file, new_file)
