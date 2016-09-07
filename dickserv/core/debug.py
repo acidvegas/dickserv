@@ -66,11 +66,13 @@ def help():
 .r <subreddit>        Read top posts from <subreddit>
 .remind <time> <text> Remind yourself about <text> in <time>.
 .resolve <ip/url>     Resolve <ip/url> to a hostname or IP address.
+.steam <query>        Search <query> on the Steam store.
 .talent               RIP DITTLE DIP DIP DIP DIP IT\'S YA BIRTHDAY!!1@11!
+.tpb <query>          Search <query> on ThePirateBay.
 .ud <word>            Get the urban dictionary definition of <word>.
 .uptime               Get the amount of time DickServ has been running.
 .wolfram <ask>        Get the results of <query> from WolframAlpha.
-.yt <query>         Search <query> on YouTube.'''
+.yt <query>           Search <query> on YouTube.'''
 
 def info():
     clear()
