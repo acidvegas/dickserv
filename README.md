@@ -11,8 +11,10 @@ Browse to the */core/* folder and edit your *config.py* file.
 | Command | Description |
 | --- | --- |
 | @help | Information about the commands. |
+| .ascii delete \<name> | Delete the \<name> ASCII art file. |
 | .ascii list | A list of all the ASCII art files. |
 | .ascii random | Display a random ASCII art file. |
+| .ascii rename \<old> \<new> | Rename the \<old> ASCII art file to \<new>. |
 | .ascii \<name> | Display the <name> ASCII art file. |
 | .btc | Bitcoin rate in USD. |
 | .date | Get the current date and time. |
