@@ -222,6 +222,16 @@ class IRC(object):
                             self.sendmsg(resolve.host(args))
                         else:
                             self.sendmsg(resolve.url(httplib.clean_url(args)))
+                    elif cmd == 'steam':
+                        api  = steam.search(args)
+                        if api:
+                            data = list(api.keys())
+                            for i in data:
+                                count = str(data.index(i)+1)
+                                self.sendmsg('%s %s' % (color('[' + str(count) + ']', pink), i))
+                                self.sendmsg(' - ' + color(api[i]))
+                        else:
+                            self.error('No results found.')
                     elif cmd == 'tpb':
                         api  = tpb.search(args)
                         if api:
@@ -229,7 +239,7 @@ class IRC(object):
                             for i in data:
                                 count = str(data.index(i)+1)
                                 self.sendmsg('%s %s %s%s%s%s%s' % (color('[' + str(count) + ']', pink), i, color('[', white), color(api[i]['seeders'], green), color('|', white), color(api[i]['leechers'], red), color(']', white)))
-                                self.sendmsg(' -  %s' % color(api[i]['url'], grey))
+                                self.sendmsg(' - ' + color(api[i]['url'], grey))
                         else:
                             self.error('No results found.')
                     elif cmd == 'ud':
