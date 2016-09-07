@@ -13,6 +13,7 @@ import isup
 import reddit
 import reminder
 import resolve
+import steam
 import tpb
 import unreal
 import wolfram
