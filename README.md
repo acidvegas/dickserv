@@ -28,9 +28,11 @@ Browse to the */core/* folder and edit your *config.py* file.
 | .isup \<url> | Check if \<url> is up or not. |
 | .ltc | Litecoin rate in USD. |
 | .r \<subreddit> | Read top posts from <subreddit> |
-| .remind \<time> \<text> | Remind yourself about \<text> in \<time>.
-| .resolve \<ip/url> | Resolve a <ip/url> to a hostname or IP address.
+| .remind \<time> \<text> | Remind yourself about \<text> in \<time>. |
+| .resolve \<ip/url> | Resolve a <ip/url> to a hostname or IP address. |
+| .steam \<query> | Search \<query on the Steam store. |
 | .talent | RIP DITTLE DIP DIP DIP DIP IT\'S YA BIRTHDAY!!1@11! |
+| .tpb \<query> | Searc \<query on ThePirateBay. |
 | .ud \<word> | Get the urban dictionary definition of \<word>. |
 | .uptime | Get the amount of time DickServ has been running. |
 | .wolfram \<ask> | Get the results of <query> from WolframAlpha. |
