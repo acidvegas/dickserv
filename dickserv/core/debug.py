@@ -92,11 +92,3 @@ def keep_alive():
         while True : input('')
     except KeyboardInterrupt:
         sys.exit()
-
-def load_reminders():
-    reminder_file = os.getcwd() + '/data/reminders.txt'
-    if os.path.isfile(reminder_file):
-        with open(reminder_file, 'r') as r:
-            lines = list_file.read().splitlines()
-            for line in [x for x in lines if x]:
-                config.reminders.append(line)
