@@ -57,11 +57,6 @@ class IRC(object):
         self.password = password
         self.sock     = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    def startup(self):
-        reminder.loop().start()
-        unreal.loop().start()
-        self.connect()
-
     def connect(self):
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -90,6 +85,9 @@ class IRC(object):
         config.start_time = time.time()
         self.oper(self.username, self.password)
         self.join()
+        reminder.load()
+        reminder.loop().start()
+        unreal.loop().start()
         
     def event_disconnect(self):
         self.disconnect()
