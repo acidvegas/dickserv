@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # DickServ IRC Bot
 # Developed by acidvegas in Python 3
-# https://github.com/acidvegas/dickserv/
+# https://github.com/acidvegas/dickserv
 # functions.py
 
 import datetime
-import os
 import random
 import re
 import time
@@ -29,15 +28,6 @@ def between(source, start, stop):
 
 def date():
     return datetime.datetime.now().strftime('%A, %B %d, %Y - %I:%M %p')
-    
-def load_reminders():
-    data_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data')
-    reminder_file  = os.path.join(data_directory, 'reminders.txt')
-    if os.path.isfile(reminder_file):
-        with open(reminder_file, 'r') as reminder__file:
-            lines = reminder__file.read().splitlines()
-            for line in [x for x in lines if x]:
-                config.reminders.append(line)
 
 def lucky():
     return random.choice([True, False, False, False])
