@@ -12,7 +12,15 @@ import time
 import config
 import irc
 
-reminder_file = os.getcwd() + '/data/reminders.txt'
+data_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data')
+reminder_file  = os.path.join(data_directory, 'reminders.txt')
+
+def load_reminders():
+    if os.path.isfile(reminder_file):
+        with open(reminder_file, 'r') as reminder__file:
+            lines = reminder__file.read().splitlines()
+            for line in [x for x in lines if x]:
+                config.reminders.append(line)
 
 class loop(threading.Thread):
     def __init__(self):
@@ -45,6 +53,6 @@ def add(nick, duration, type, text):
 
 def sync():
     config.reminders.sort()
-    with open(reminder_file, 'w') as r:
+    with open(reminder_file, 'w') as reminder__file:
         for item in config.reminders:
-            r.write(item + '\n')
+            reminder__file.write(item + '\n')
