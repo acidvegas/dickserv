@@ -22,6 +22,5 @@ if debug.check_windows():
 if debug.check_root():
     debug.error_exit('Do not run DickServ as root!')
 debug.check_libs()
-debug.load_reminders()
 irc.DickServ.startup()
 debug.keep_alive()
