@@ -7,17 +7,29 @@
 import inspect
 import os
 
-# IRC Settings
-server   = 'localhost'
-port     = 6697
+# Connection
+server   = 'irc.server.com'
+port     = 6667
+use_ipv6 = False
+use_ssl  = False
+vhost    = None
+password = None
 channel  = '#dev'
-password = 'CHANGEME'
+key      = None
 
-# Other Settings
+# Identity
+nickname = 'DickServ'
+username = 'dickserv'
+realname = 'DickServ IRC Bot'
+
+# Login
+nickserv = None
+operserv = None
+
+# Other
 admin_host = 'admin.host'
 
 # DO NOT EDIT
 data_dir   = os.path.join(os.path.dirname(os.path.realpath(inspect.stack()[-1][1])), 'data')
-last_time  = 0
-start_time = 0
 reminders  = []
+start_time = 0
