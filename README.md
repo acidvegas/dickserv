@@ -1,11 +1,15 @@
 # dickserv
 A bot with many useful commands &amp; features for the Internet Relay Chat (IRC) protocol.
 
+###### Note
+This is just the source code to and IRC bot that I have ran on some IRC networks, and is used as a reference.
+Changes *may* need to be made in order for someone to run this on their own channel/network.
+
 ###### Requirments
  - [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/)
 
 ###### Config
-Browse to the */core/* folder and edit your *config.py* file.
+Browse to the */core/* folder and edit the *config.py* file.
 
 ###### Commands
 | Command | Description |
