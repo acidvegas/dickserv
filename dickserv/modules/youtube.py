@@ -18,8 +18,8 @@ def title(url):
     return data['items'][0]['snippet']['title']
 
 def search(query):
-    api    = 'https://www.googleapis.com/youtube/v3/search?part=snippet&key=AIzaSyC6lTRPIY-6P0zcpMggqY9mVEC2ZvXUcas&q=%s&maxResults=10&&fields=items' % httplib.data_quote(query)
-    data   = httplib.get_json(api)
+    api     = 'https://www.googleapis.com/youtube/v3/search?part=snippet&key=AIzaSyC6lTRPIY-6P0zcpMggqY9mVEC2ZvXUcas&q=%s&maxResults=10&&fields=items' % httplib.data_quote(query)
+    data    = httplib.get_json(api)
     results = {}
     for item in data['items']:
         title   = item['snippet']['title']
