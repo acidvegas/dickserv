@@ -2,7 +2,7 @@
 A bot with many useful commands &amp; features for the Internet Relay Chat (IRC) protocol.
 
 ###### Note
-The source code here is used for reference purposes.
+The source code is used for reference purposes.
 
 Changes *may* need to be made in order to run this on your own channel.
 
