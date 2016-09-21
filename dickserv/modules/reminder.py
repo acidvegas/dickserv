@@ -12,7 +12,7 @@ import time
 import config
 import irc
 
-reminder_file  = os.path.join(config.data_directory, 'reminders.txt')
+reminder_file  = os.path.join(config.data_dir, 'reminders.txt')
 
 def load_reminders():
     if os.path.isfile(reminder_file):
