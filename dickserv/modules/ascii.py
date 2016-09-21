@@ -19,7 +19,7 @@ def read(file_name):
     else:
         ascii_file = '%s/%s.txt' % (ascii_dir, file_name)
     if os.path.isfile(ascii_file):
-        ascii_txt = open(ascii_file, 'r').readlines()
+        ascii_txt = open(ascii_file, mode='r', encoding='utf8').readlines()
         if file_name == 'random':
             return ascii_txt + [os.path.basename(ascii_file),]
         else:
