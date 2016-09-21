@@ -41,4 +41,4 @@ Browse to the */core/* folder and edit your *config.py* file.
 
 ##### ToDo
 - Add a google / quote / tweet command.
-- Make the bot join `#scroll` also for extra long scrolls from the `.ascii` command.
+- Security measures against command floods.
