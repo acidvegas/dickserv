@@ -2,8 +2,9 @@
 A bot with many useful commands &amp; features for the Internet Relay Chat (IRC) protocol.
 
 ###### Note
-This is just the source code to and IRC bot that I have ran on some IRC networks, and is used as a reference.
-Changes *may* need to be made in order for someone to run this on their own channel/network.
+The source code here is used for reference purposes.
+
+Changes *may* need to be made in order to run this on your own channel.
 
 ###### Requirments
  - [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/)
