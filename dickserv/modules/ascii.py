@@ -4,7 +4,6 @@
 # https://github.com/acidvegas/dickserv
 # ascii.py
 
-import glob
 import os
 import random
 
@@ -14,7 +13,7 @@ ascii_dir = os.path.join(config.data_dir, 'ascii')
 
 def read(file_name):
     if file_name == 'random':
-        ascii_list = glob.glob(ascii_dir + '/*')
+        ascii_list = os.listdir(ascii_dir)
         ascii_file = random.choice(ascii_list)
     else:
         ascii_file = '%s/%s.txt' % (ascii_dir, file_name)
