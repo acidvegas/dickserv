@@ -65,7 +65,7 @@ class IRC(object):
         self.realname   = config.realname
         self.nickserv   = config.nickserv
         self.operserv   = config.operserv
-        self.admin_host = self.admin_host
+        self.admin_host = config.admin_host
         self.last_time  = 0
         self.sock       = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
