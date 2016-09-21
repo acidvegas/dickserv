@@ -4,6 +4,18 @@
 # https://github.com/acidvegas/dickserv
 # unreal.py
 
+'''
+This module is to check for updates on the UnrealIRCd.
+
+To enable this module, make the following changes:
+
+core/irc.py      | Add "unreal.loop().start()" into the "def loops(self):" function
+core/commands.py | Add "import unreal"
+core/config.py   | Add "unreal_dir = '~/CHANGEME'" under the "admin_host" line. (Replace CHANGEME with the directory location.)
+
+To disable this module, undo the changes above.
+'''
+
 import threading
 import time
 
