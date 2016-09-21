@@ -16,7 +16,7 @@ reminder_file  = os.path.join(config.data_directory, 'reminders.txt')
 
 def load_reminders():
     if os.path.isfile(reminder_file):
-        with open(reminder_file, 'r') as reminder__file:
+        with open(reminder_file, mode='r', encoding='utf8', errors='replace') as reminder__file:
             lines = reminder__file.read().splitlines()
             for line in [x for x in lines if x]:
                 config.reminders.append(line)
@@ -35,7 +35,7 @@ class loop(threading.Thread):
                     rnick = i.split('|')[1]
                     rtext = i.split('|')[2]
                     if rdate == date:
-                        irc.DickServ.sendmsg('[%s] %s, %s' % (irc.color('R', irc.pink), rnick, rtext))
+                        irc.DickServ.sendmsg(config.channel, '[%s] %s, %s' % (irc.color('R', irc.pink), rnick, rtext))
                         config.reminders.remove(i)
                         sync()
                 time.sleep(60)
