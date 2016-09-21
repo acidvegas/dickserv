@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 # DickServ IRC Bot
 # Developed by acidvegas in Python 3
-# https://github.com/acidvegas/dickserv/
+# https://github.com/acidvegas/dickserv
 # ascii.py
 
 import glob
 import os
 import random
 
-ascii_dir = os.getcwd() + '/data/ascii'
+import config
+
+ascii_dir = os.path.join(config.data_dir, 'ascii')
 
 def read(file_name):
     if file_name == 'random':
