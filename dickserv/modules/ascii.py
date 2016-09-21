@@ -14,11 +14,11 @@ ascii_dir = os.path.join(config.data_dir, 'ascii')
 def read(file_name):
     if file_name == 'random':
         ascii_list = os.listdir(ascii_dir)
-        ascii_file = random.choice(ascii_list)
+        ascii_file = os.path.join(ascii_dir, random.choice(ascii_list))
     else:
-        ascii_file = '%s/%s.txt' % (ascii_dir, file_name)
+        ascii_file = os.path.join(ascii_dir, file_name + '.txt')
     if os.path.isfile(ascii_file):
-        ascii_txt = open(ascii_file, mode='r', encoding='utf8',  errors='replace').readlines()
+        ascii_txt = open(ascii_file, mode='r', encoding='utf8', errors='replace').readlines()
         if file_name == 'random':
             return ascii_txt + [os.path.basename(ascii_file),]
         else:
@@ -27,10 +27,10 @@ def read(file_name):
         return False
 
 def delete(file_name):
-    ascii_file = '%s/%s.txt' % (ascii_dir, file_name)
+    ascii_file = os.path.join(ascii_dir, file_name + '.txt')
     os.remove(ascii_file)
 
 def rename(file_name, new_name):
-    ascii_file = '%s/%s.txt' % (ascii_dir, file_name)
-    new_file   = '%s/%s.txt' % (ascii_dir, new_name)
+    ascii_file = os.path.join(ascii_dir, file_name + '.txt')
+    new_file   = os.path.join(ascii_dir, new_name + '.txt')
     os.rename(ascii_file, new_file)
