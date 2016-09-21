@@ -33,7 +33,7 @@ def check_update():
         return False
 
 def current_version():
-    version = os.popen('~/unreal/./unrealircd version').read()
+    version = os.popen(config.unreal_dir + './unrealircd version').read()
     return version[11:].split()[0]
 
 class loop(threading.Thread):
