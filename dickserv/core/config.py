@@ -14,7 +14,7 @@ use_ipv6 = False
 use_ssl  = False
 vhost    = None
 password = None
-channel  = '#dev'
+channel  = '#chats'
 key      = None
 
 # Identity
@@ -28,7 +28,7 @@ operserv = None
 
 # Other
 admin_host = 'admin.host'
-unreal_dir = '~/unreal/' # For running the bot side-by-side with UnrealIRCd. See unreal.py module for more information.
+unreal_dir = '~/unreal/' # For running the bot side-by-side with UnrealIRCd. See modules/unreal.py for more information.
 
 # DO NOT EDIT
 data_dir   = os.path.join(os.path.dirname(os.path.realpath(inspect.stack()[-1][1])), 'data')
