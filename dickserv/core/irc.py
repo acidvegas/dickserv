@@ -307,6 +307,7 @@ class IRC(object):
                                     self.sendmsg(chan, line)
                         else:
                             self.error(chan, 'Invalid file name.', 'Use ".ascii list" for a list of valid file names.')
+                    self.last_time = time.time()
         except Exception as ex:
             self.error(chan, 'Command threw an exception.', ex)
 
