@@ -44,6 +44,6 @@ Browse to the */core/* folder and edit the *config.py* file.
 | .wolfram \<ask> | Get the results of <query> from WolframAlpha. |
 | .yt \<query> | Search \<query> on YouTube. |
 
-##### ToDo
+##### Todo
 - Add a google / quote / tweet command.
 - Security measures against command floods.
