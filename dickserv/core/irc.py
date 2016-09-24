@@ -67,6 +67,7 @@ class IRC(object):
         self.operserv   = config.operserv
         self.admin_host = config.admin_host
         self.last_time  = 0
+        self.last_state = False
         self.sock       = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def connect(self):
@@ -158,138 +159,160 @@ class IRC(object):
                     args = msg.replace(msg.split()[0], '', 1)[1:]
                     if time.time() - self.last_time < 3:
                         self.sendmsg(chan, color('Slow down nerd!', red))
-                    elif not args:
-                        if cmd == 'btc':
-                            self.sendmsg(chan, '%s - %s' % (color('BTC', orange), cryptocurrency.btc()))
-                        elif cmd == 'date':
-                            self.sendmsg(chan, functions.date())
-                        elif cmd == 'dickserv':
-                            self.sendmsg(chan, bold + 'DickServ IRC Bot - Developed by acidvegas in Python 3 - https://github.com/acidvegas/dickserv')
-                        elif cmd == 'ltc':
-                            self.sendmsg(chan, '%s - %s' % (color('LTC', grey), cryptocurrency.ltc()))
-                        elif cmd == 'talent':
-                            self.sendmsg(chan, color('(^)', 'random'))
-                        elif cmd == 'uptime':
-                            self.sendmsg(chan, functions.uptime())
+                        self.last_state = True
                     else:
-                        if cmd == 'define':
-                            definition = dictionary.scrabble(args)
-                            if definition:
-                                self.sendmsg(chan, '%s - %s: %s' % (color('Definition', white, blue), args.lower(), definition))
-                            else:
-                                self.error(chan, 'No results found.')
-                        elif cmd == 'filter':
-                            if args == 'enable':
-                                self.mode(self.channel, '+G')
-                            elif args == 'disable':
-                                self.mode(self.channel, '-G')
-                        elif cmd == 'flood' and host == self.admin_host:
-                            if args == 'enable':
-                                self.mode(self.channel, '-f [30m,10t]:10')
-                            elif args == 'disable':
-                                self.mode(self.channel, '+f [10t,30m]:10')
-                        elif cmd == 'geoip':
-                            if functions.check_ip(args):
-                                results = geoip.lookup(args)
-                                if results:
-                                    self.sendmsg(chan, results)
+                        if not args:
+                            if cmd == 'btc':
+                                self.sendmsg(chan, '%s - %s' % (color('BTC', orange), cryptocurrency.btc()))
+                            elif cmd == 'date':
+                                self.sendmsg(chan, functions.date())
+                            elif cmd == 'dickserv':
+                                self.sendmsg(chan, bold + 'DickServ IRC Bot - Developed by acidvegas in Python 3 - https://github.com/acidvegas/dickserv')
+                            elif cmd == 'ltc':
+                                self.sendmsg(chan, '%s - %s' % (color('LTC', grey), cryptocurrency.ltc()))
+                            elif cmd == 'talent':
+                                self.sendmsg(chan, color('(^)', 'random'))
+                            elif cmd == 'uptime':
+                                self.sendmsg(chan, functions.uptime())
+                        else:
+                            if cmd == 'ascii':
+                                split = args.split()
+                                if split[0] == 'delete' and len(split)== 2 and host == self.admin_host:
+                                    ascii.delete(split[1])
+                                    self.sendmsg(chan, 'File deleted.')
+                                elif split[0] == 'rename' and len(split) == 3 and host == self.admin_host:
+                                    ascii.rename(split[1], split[2])
+                                    self.sendmsg(chan, 'File renamed.')
                                 else:
-                                    self.error(chan, 'No information found.')
-                            else:
-                                self.error(chan, 'Invalid IP address.')
-                        elif cmd == 'imdb':
-                            api = imdb.search(args)
-                            if api:
-                                self.sendmsg(chan, '%sTitle       :%s %s' % (bold, reset, color('%s %s %s' % (api['Title'], api['Rated'], api['Year']), grey)))
-                                self.sendmsg(chan, '%sLink        :%s %s' % (bold, reset, color('http://imdb.com/title/' +  api['imdbID'], grey)))
-                                self.sendmsg(chan, '%sGenre       :%s %s' % (bold, reset, color(api['Genre'], grey)))
-                                self.sendmsg(chan, '%sRating      :%s %s' % (bold, reset, color(api['imdbRating'], grey)))
-                                prefix = bold + 'Description :' + reset
-                                for line in re.findall(r'.{1,60}(?:\s+|$)', api['Plot']):
-                                    self.sendmsg(chan, '%s %s' % (prefix, color(line, grey)))
-                                    prefix = '             '
-                            else:
-                                self.error(chan, 'No results found.')
-                        elif cmd == 'isup':
-                            self.sendmsg(chan, '%s is %s' % (args, isup.check(args)))
-                        elif cmd == 'r':
-                            api = reddit.read(args)
-                            if api:
-                                data = list(api.keys())
-                                for i in data:
-                                    count = str(data.index(i)+1)
-                                    self.sendmsg(chan, '%s %s %s%s%s%s%s' % (color('[' + str(count) + ']', pink), functions.trim(i, 70), color('[%s|' % str(api[i]['score']), white), color('+' + str(api[i]['ups']), green), color('/', white), color('-' + str(api[i]['downs']), red), color(']', white)))
-                                    self.sendmsg(chan, ' - ' + color(api[i]['url'], grey))
-                            else:
-                                self.error(chan, 'No results found.')
-                        elif cmd == 'remind':
-                            if len(args.split()) >= 2:
-                                duration = args.split()[0][:-1]
-                                type     = args.split()[0][-1:]
-                                data     = args[len(args.split()[0])+1:]
-                                if duration.isdigit():
-                                    duration = int(duration)
-                                    if duration > 0:
-                                        if (type == 'm' and (duration <= 43200 or duration >= 20)) or (type == 'h' and duration <= 720) or (type == 'd' and duration <= 30):
-                                            if len(config.reminders) < 20:
-                                                reminder.add(nick, duration, type, data)
-                                                self.sendmsg(chan, 'Added new reminder to the database!')
-                                            else:
-                                                self.error(chan, 'Too many reminders.', 'The max is 20.')
+                                    lines = ascii.read(args)
+                                    if lines:
+                                        if len(lines) > 50:
+                                            self.error(chan, 'File is too big.', 'Take it to %s' % color('#scroll', light_blue))
                                         else:
-                                            self.error(chan, 'Invalid arguments.', 'Duration is too high or low for the given type.')
+                                            for line in lines:
+                                                self.sendmsg(chan, line)
+                                    else:
+                                        self.error(chan, 'Invalid file name.', 'Use ".ascii list" for a list of valid file names.')
+                            elif cmd == 'define':
+                                definition = dictionary.scrabble(args)
+                                if definition:
+                                    self.sendmsg(chan, '%s - %s: %s' % (color('Definition', white, blue), args.lower(), definition))
                                 else:
-                                    self.error(chan, 'Invalid arguments.')
-                            else:
-                                self.error(chan, 'Missing arguments.')
-                        elif cmd == 'resolve':
-                            if functions.check_ip(args):
-                                self.sendmsg(chan, resolve.host(args))
-                            else:
-                                self.sendmsg(chan, resolve.url(httplib.clean_url(args)))
-                        elif cmd == 'steam':
-                            api  = steam.search(args)
-                            if api:
-                                data = list(api.keys())
-                                for i in data:
-                                    count = str(data.index(i)+1)
-                                    self.sendmsg(chan, '%s %s' % (color('[' + str(count) + ']', pink), i))
-                                    self.sendmsg(chan, ' - ' + color(api[i]))
-                            else:
-                                self.error(chan, 'No results found.')
-                        elif cmd == 'tpb':
-                            api  = tpb.search(args)
-                            if api:
-                                data = list(api.keys())
-                                for i in data:
-                                    count = str(data.index(i)+1)
-                                    self.sendmsg(chan, '%s %s %s%s%s%s%s' % (color('[' + str(count) + ']', pink), i, color('[', white), color(api[i]['seeders'], green), color('|', white), color(api[i]['leechers'], red), color(']', white)))
-                                    self.sendmsg(chan, ' - ' + color(api[i]['url'], grey))
-                            else:
-                                self.error(chan, 'No results found.')
-                        elif cmd == 'ud':
-                            definition = dictionary.urban(args)
-                            if definition : self.sendmsg(chan, '%s%s - %s: %s' % (color('urban', white, blue), color('DICTIONARY', yellow, black), args, definition))
-                            else          : self.error(chan, 'No results found.')
-                        elif cmd == 'wolfram':
-                            results = wolfram.ask(args)
-                            if results : self.sendmsg(chan, '%s%s - %s' % (color('Wolfram', red), color('Alpha', orange), results))
-                            else       : self.error(chan, 'No results found.')
-                        elif cmd == 'yt':
-                            api  = youtube.search(args)
-                            if api:
-                                data = list(api.keys())
-                                for i in api.keys():
-                                    count = str(data.index(i)+1)
-                                    self.sendmsg(chan, '%s %s' % (color('[' + str(count) + ']', pink), functions.trim(i, 70)))
-                                    self.sendmsg(chan, ' - ' + color(api[i], grey))
-                            else:
-                                self.error(chan, 'No results found.')
-                    self.last_time = time.time()
-            if chan == self.channel or chan == '#scroll':
+                                    self.error(chan, 'No results found.')
+                            elif cmd == 'filter':
+                                if args == 'enable':
+                                    self.mode(self.channel, '+G')
+                                elif args == 'disable':
+                                    self.mode(self.channel, '-G')
+                            elif cmd == 'flood' and host == self.admin_host:
+                                if args == 'enable':
+                                    self.mode(self.channel, '-f [30m,10t]:10')
+                                elif args == 'disable':
+                                    self.mode(self.channel, '+f [10t,30m]:10')
+                            elif cmd == 'geoip':
+                                if functions.check_ip(args):
+                                    results = geoip.lookup(args)
+                                    if results:
+                                        self.sendmsg(chan, results)
+                                    else:
+                                        self.error(chan, 'No information found.')
+                                else:
+                                    self.error(chan, 'Invalid IP address.')
+                            elif cmd == 'imdb':
+                                api = imdb.search(args)
+                                if api:
+                                    self.sendmsg(chan, '%sTitle       :%s %s' % (bold, reset, color('%s %s %s' % (api['Title'], api['Rated'], api['Year']), grey)))
+                                    self.sendmsg(chan, '%sLink        :%s %s' % (bold, reset, color('http://imdb.com/title/' +  api['imdbID'], grey)))
+                                    self.sendmsg(chan, '%sGenre       :%s %s' % (bold, reset, color(api['Genre'], grey)))
+                                    self.sendmsg(chan, '%sRating      :%s %s' % (bold, reset, color(api['imdbRating'], grey)))
+                                    prefix = bold + 'Description :' + reset
+                                    for line in re.findall(r'.{1,60}(?:\s+|$)', api['Plot']):
+                                        self.sendmsg(chan, '%s %s' % (prefix, color(line, grey)))
+                                        prefix = '             '
+                                else:
+                                    self.error(chan, 'No results found.')
+                            elif cmd == 'isup':
+                                self.sendmsg(chan, '%s is %s' % (args, isup.check(args)))
+                            elif cmd == 'r':
+                                api = reddit.read(args)
+                                if api:
+                                    data = list(api.keys())
+                                    for i in data:
+                                        count = str(data.index(i)+1)
+                                        self.sendmsg(chan, '%s %s %s%s%s%s%s' % (color('[' + str(count) + ']', pink), functions.trim(i, 70), color('[%s|' % str(api[i]['score']), white), color('+' + str(api[i]['ups']), green), color('/', white), color('-' + str(api[i]['downs']), red), color(']', white)))
+                                        self.sendmsg(chan, ' - ' + color(api[i]['url'], grey))
+                                else:
+                                    self.error(chan, 'No results found.')
+                            elif cmd == 'remind':
+                                if len(args.split()) >= 2:
+                                    duration = args.split()[0][:-1]
+                                    type     = args.split()[0][-1:]
+                                    data     = args[len(args.split()[0])+1:]
+                                    if duration.isdigit():
+                                        duration = int(duration)
+                                        if duration > 0:
+                                            if (type == 'm' and (duration <= 43200 or duration >= 20)) or (type == 'h' and duration <= 720) or (type == 'd' and duration <= 30):
+                                                if len(config.reminders) < 20:
+                                                    reminder.add(nick, duration, type, data)
+                                                    self.sendmsg(chan, 'Added new reminder to the database!')
+                                                else:
+                                                    self.error(chan, 'Too many reminders.', 'The max is 20.')
+                                            else:
+                                                self.error(chan, 'Invalid arguments.', 'Duration is too high or low for the given type.')
+                                    else:
+                                        self.error(chan, 'Invalid arguments.')
+                                else:
+                                    self.error(chan, 'Missing arguments.')
+                            elif cmd == 'resolve':
+                                if functions.check_ip(args):
+                                    self.sendmsg(chan, resolve.host(args))
+                                else:
+                                    self.sendmsg(chan, resolve.url(httplib.clean_url(args)))
+                            elif cmd == 'steam':
+                                api  = steam.search(args)
+                                if api:
+                                    data = list(api.keys())
+                                    for i in data:
+                                        count = str(data.index(i)+1)
+                                        self.sendmsg(chan, '%s %s' % (color('[' + str(count) + ']', pink), i))
+                                        self.sendmsg(chan, ' - ' + color(api[i]))
+                                else:
+                                    self.error(chan, 'No results found.')
+                            elif cmd == 'tpb':
+                                api  = tpb.search(args)
+                                if api:
+                                    data = list(api.keys())
+                                    for i in data:
+                                        count = str(data.index(i)+1)
+                                        self.sendmsg(chan, '%s %s %s%s%s%s%s' % (color('[' + str(count) + ']', pink), i, color('[', white), color(api[i]['seeders'], green), color('|', white), color(api[i]['leechers'], red), color(']', white)))
+                                        self.sendmsg(chan, ' - ' + color(api[i]['url'], grey))
+                                else:
+                                    self.error(chan, 'No results found.')
+                            elif cmd == 'ud':
+                                definition = dictionary.urban(args)
+                                if definition : self.sendmsg(chan, '%s%s - %s: %s' % (color('urban', white, blue), color('DICTIONARY', yellow, black), args, definition))
+                                else          : self.error(chan, 'No results found.')
+                            elif cmd == 'wolfram':
+                                results = wolfram.ask(args)
+                                if results : self.sendmsg(chan, '%s%s - %s' % (color('Wolfram', red), color('Alpha', orange), results))
+                                else       : self.error(chan, 'No results found.')
+                            elif cmd == 'yt':
+                                api  = youtube.search(args)
+                                if api:
+                                    data = list(api.keys())
+                                    for i in api.keys():
+                                        count = str(data.index(i)+1)
+                                        self.sendmsg(chan, '%s %s' % (color('[' + str(count) + ']', pink), functions.trim(i, 70)))
+                                        self.sendmsg(chan, ' - ' + color(api[i], grey))
+                                else:
+                                    self.error(chan, 'No results found.')
+                        self.last_time = time.time()
+            if chan == '#scroll':
                 cmd  = msg.split()[0].replace('.', '', 1)
                 args = msg.replace(msg.split()[0], '', 1)[1:]
-                if cmd == 'ascii':
+                if time.time() - self.last_time < 3:
+                    self.sendmsg(chan, color('Slow down nerd!', red))
+                elif cmd == 'ascii':
                     split = args.split()
                     if split[0] == 'delete' and len(split)== 2 and host == self.admin_host:
                         ascii.delete(split[1])
@@ -300,11 +323,8 @@ class IRC(object):
                     else:
                         lines = ascii.read(args)
                         if lines:
-                            if len(lines) > 50 and chan != '#scroll':
-                                self.error(chan, 'File is too big.', 'Take it to %s' % color('#scroll', light_blue))
-                            else:
-                                for line in lines:
-                                    self.sendmsg(chan, line)
+                            for line in lines:
+                                self.sendmsg(chan, line)
                         else:
                             self.error(chan, 'Invalid file name.', 'Use ".ascii list" for a list of valid file names.')
                     self.last_time = time.time()
