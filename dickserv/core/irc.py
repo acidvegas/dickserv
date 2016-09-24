@@ -52,23 +52,23 @@ def color(msg, foreground, background=None):
 
 class IRC(object):
     def __init__(self):
-        self.server     = config.server
-        self.port       = config.port
-        self.use_ipv6   = config.use_ipv6
-        self.use_ssl    = config.use_ssl
-        self.vhost      = config.vhost
-        self.password   = config.password
-        self.channel    = config.channel
-        self.key        = config.key
-        self.nickname   = config.nickname
-        self.username   = config.username
-        self.realname   = config.realname
-        self.nickserv   = config.nickserv
-        self.operserv   = config.operserv
-        self.admin_host = config.admin_host
-        self.last_time  = 0
-        self.last_state = False
-        self.sock       = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server       = config.server
+        self.port         = config.port
+        self.use_ipv6     = config.use_ipv6
+        self.use_ssl      = config.use_ssl
+        self.vhost        = config.vhost
+        self.password     = config.password
+        self.channel      = config.channel
+        self.key          = config.key
+        self.nickname     = config.nickname
+        self.username     = config.username
+        self.realname     = config.realname
+        self.nickserv     = config.nickserv
+        self.operserv     = config.operserv
+        self.admin_host   = config.admin_host
+        self.cmd_throttle = config.cmd_throttle
+        self.last_time    = 0
+        self.sock         = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def connect(self):
         try:
@@ -145,7 +145,7 @@ class IRC(object):
                 if not msg.startswith('.'):
                     urls = httplib.parse_urls(msg)
                     if urls:
-                        if time.time() - self.last_time > 3:
+                        if time.time() - self.last_time > self.cmd_throttle:
                             self.last_time = time.time()
                             self.event_url(chan, urls[0])
                     if 'qhat' in msg:
@@ -157,9 +157,8 @@ class IRC(object):
                 else:
                     cmd  = msg.split()[0].replace('.', '', 1)
                     args = msg.replace(msg.split()[0], '', 1)[1:]
-                    if time.time() - self.last_time < 3:
+                    if time.time() - self.last_time < self.cmd_throttle:
                         self.sendmsg(chan, color('Slow down nerd!', red))
-                        self.last_state = True
                     else:
                         if not args:
                             if cmd == 'btc':
@@ -310,7 +309,7 @@ class IRC(object):
             if chan == '#scroll':
                 cmd  = msg.split()[0].replace('.', '', 1)
                 args = msg.replace(msg.split()[0], '', 1)[1:]
-                if time.time() - self.last_time < 3:
+                if time.time() - self.last_time < self.cmd_throttle:
                     self.sendmsg(chan, color('Slow down nerd!', red))
                 elif cmd == 'ascii':
                     split = args.split()
