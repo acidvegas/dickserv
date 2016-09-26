@@ -274,7 +274,7 @@ class IRC(object):
                                     for i in data:
                                         count = str(data.index(i)+1)
                                         self.sendmsg(chan, '%s %s' % (color('[' + str(count) + ']', pink), i))
-                                        self.sendmsg(chan, ' - ' + color(api[i]))
+                                        self.sendmsg(chan, ' - ' + color(api[i], grey))
                                 else:
                                     self.error(chan, 'No results found.')
                             elif cmd == 'tpb':
