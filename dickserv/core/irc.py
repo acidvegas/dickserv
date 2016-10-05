@@ -68,7 +68,7 @@ class IRC(object):
         self.admin_host   = config.admin_host
         self.cmd_throttle = config.cmd_throttle
         self.last_time    = 0
-        self.sock         = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock         = None
 
     def connect(self):
         try:
