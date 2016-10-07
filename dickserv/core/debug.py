@@ -9,8 +9,6 @@ import os
 import sys
 import time
 
-import config
-
 def check_admin():
     if ctypes.windll.shell32.IsUserAnAdmin() != 0:
         return True
