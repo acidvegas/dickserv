@@ -128,7 +128,7 @@ class IRC(object):
     def event_join(self, chan, nick):
         if chan == self.channel:
             self.sendmsg(chan, '%s %s%s' % (color('SMELLO', 'random'), bold, nick.upper()))
-    
+
     def event_kick(self, chan, kicked):
         if chan == self.channel:
             if kicked == self.nickname:
@@ -156,7 +156,7 @@ class IRC(object):
                         self.sendmsg(chan, 'https://github.com/acidvegas/dickserv/blob/master/README.md#commands')
                 else:
                     cmd  = msg.split()[0].replace('.', '', 1)
-                    args = msg.replace(msg.split()[0], '', 1)[1:]
+                    args = msg[len(cmd)+2:].split()
                     if time.time() - self.last_time < self.cmd_throttle:
                         self.sendmsg(chan, color('Slow down nerd!', red))
                     else:
