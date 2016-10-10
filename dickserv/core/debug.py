@@ -8,12 +8,6 @@ import ctypes
 import os
 import sys
 import time
-
-def check_admin():
-    if ctypes.windll.shell32.IsUserAnAdmin() != 0:
-        return True
-    else:
-        return False
         
 def check_libs():
     try:
@@ -21,12 +15,18 @@ def check_libs():
     except ImportError:
         error_exit('Missing required \'bs4\' library. (https://pypi.python.org/pypi/beautifulsoup4)')
 
-def check_root():
-    if os.getuid() == 0 or os.geteuid() == 0:
-        return True
+def check_privileges():
+    if check_windows():
+        if ctypes.windll.shell32.IsUserAnAdmin() != 0:
+            return True
+        else:
+            return False
     else:
-        return False
-    
+        if os.getuid() == 0 or os.geteuid() == 0:
+            return True
+        else:
+            return False
+
 def check_version(major):
     if sys.version_info.major == major:
         return True
@@ -47,12 +47,12 @@ def clear():
 
 def error(msg, reason=None):
     if reason:
-        print('%s | [!] - %s (%s)' % (get_time(), msg, str(reason)))
+        print('{0} | [!] - {1} ({2})'.format(get_time(), msg, str(reason)))
     else:
-        print('%s | [!] - %s' % (get_time(), msg))
+        print('{0} | [!] - {1}'.format(get_time(), msg))
 
 def error_exit(msg):
-    raise SystemExit('%s | [!] - %s' % (get_time(), msg))
+    raise SystemExit('{0} | [!] - {1}'.format(get_time(), msg))
 
 def get_time():
     return time.strftime('%I:%M:%S')
@@ -60,12 +60,12 @@ def get_time():
 def info():
     clear()
     print(''.rjust(56, '#'))
-    print('#%s#' % ''.center(54))
-    print('#%s#' % 'DickServ IRC Bot'.center(54))
-    print('#%s#' % 'Developed by acidvegas in Python 3'.center(54))
-    print('#%s#' % 'https://github.com/acidvegas/dickserv'.center(54))
-    print('#%s#' % ''.center(54))
+    print('#{0}#'.format(''.center(54)))
+    print('#{0}#'.format('DickServ IRC Bot'.center(54)))
+    print('#{0}#'.format('Developed by acidvegas in Python 3'.center(54)))
+    print('#{0}#'.format('https://github.com/acidvegas/dickserv'.center(54)))
+    print('#{0}#'.format(''.center(54)))
     print(''.rjust(56, '#'))
 
 def irc(msg):
-    print('%s | [~] - %s' % (get_time(), msg))
+    print('{0} | [~] - {1}'.format(get_time(), msg))
