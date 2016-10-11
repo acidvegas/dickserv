@@ -8,16 +8,12 @@ import httplib
 import functions
 
 def scrabble(word):
-    data    = httplib.data_encode({'dictWord' : word})
-    source  = httplib.get_source('http://scrabble.hasbro.com/en-us/tools#dictionary', data.encode('ascii'))
-    results = functions.between(source, '<strong class="roboto">', '</strong>')
+    source  = httplib.get_source('http://www.merriam-webster.com/dictionary/' + word.replace(' ', '%20'))
+    results = functions.between(source, '<meta name="description" content="Define {0}: '.format(word), '">')
     if results:
-        if results == 'CONGRATULATIONS!':
-            source     = source.replace('\t', '').replace('\n', '')
-            definition = functions.between(source, '<h4>%s</h4>' % word.upper(), '<p>Related Words:')
-            return definition
-        elif results == 'SORRY. NO RESULT.':
-            return False
+        return results
+    else:
+        return False
   
 def urban(word):
     api = httplib.get_json('http://api.urbandictionary.com/v0/define?term=' + word.replace(' ', '+'))
