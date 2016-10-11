@@ -49,4 +49,4 @@ def trim(data, max_length):
 
 def uptime():
     uptime = datetime.datetime(1,1,1) + datetime.timedelta(seconds=time.time() - config.start_time)
-    return '%d Days, %d Hours, %d Minutes, %d Seconds' % (uptime.day-1, uptime.hour, uptime.minute, uptime.second)
+    return '{0} Days, {1} Hours, {2} Minutes, {3} Seconds' % (uptime.day-1, uptime.hour, uptime.minute, uptime.second)
