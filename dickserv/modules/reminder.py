@@ -55,6 +55,6 @@ def add(nick, duration, type, text):
 
 def sync():
     config.reminders.sort()
-    with open(reminder_file, 'w') as reminder__file:
+    with open(reminder_file, mode='w', encoding='utf8', errors='replace') as reminder__file:
         for item in config.reminders:
             reminder__file.write(item + '\n')
