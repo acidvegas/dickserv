@@ -143,8 +143,8 @@ class IRC(object):
                     elif msg == '@help':
                         self.sendmsg(chan, 'https://github.com/acidvegas/dickserv/blob/master/README.md#commands')
                 else:
-                    cmd  = msg.split()[0].replace('.', '', 1)
-                    args = msg.replace(msg.split()[0], '', 1)[1:]
+                    cmd  = msg.split()[0][1:]
+                    args = msg[len(cmd)+2:]
                     if time.time() - self.last_time < self.cmd_throttle:
                         self.sendmsg(chan, color('Slow down nerd!', red))
                     else:
