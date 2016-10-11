@@ -9,7 +9,7 @@ import re
 import httplib
 
 def search(query):
-    url      = 'https://thepiratebay.org/search/' + query.replace(' ', '+') + '/0/99/0'
+    url      = 'https://thepiratebay.org/search/{0}/0/99/0'.format(query.replace(' ', '+'))
     source   = httplib.get_source(url)
     torrents = re.findall('<a href="(.*?)" class="detLink".*>(.*?)</a>', source)
     seeders  = re.findall('\t\t</td>\n\t\t<td align="right">(.*?)</td>', source)
