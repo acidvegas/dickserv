@@ -29,13 +29,13 @@ class loop(threading.Thread):
             reminders = config.reminders
             if reminders:
                 date = datetime.datetime.now()
-                date = '%d/%d-%d:%d' % (date.month, date.day, date.hour, date.minute)
+                date = '{0}/{1}-{2}:{3}'.format(date.month, date.day, date.hour, date.minute)
                 for i in reminders:
                     rdate = i.split('|')[0]
                     rnick = i.split('|')[1]
                     rtext = i.split('|')[2]
                     if rdate == date:
-                        irc.DickServ.sendmsg(config.channel, '[%s] %s, %s' % (irc.color('R', irc.pink), rnick, rtext))
+                        irc.DickServ.sendmsg(config.channel, '[{0}] {1}, {2}'.format(irc.color('R', irc.pink), rnick, rtext))
                         config.reminders.remove(i)
                         sync()
                 time.sleep(60)
@@ -43,11 +43,14 @@ class loop(threading.Thread):
                 time.sleep(60*19)
 
 def add(nick, duration, type, text):
-    if   type == 'm': date = datetime.datetime.now() + datetime.timedelta(minutes=duration)
-    elif type == 'h': date = datetime.datetime.now() + datetime.timedelta(hours=duration)
-    elif type == 'd': date = datetime.datetime.now() + datetime.timedelta(days=duration)
-    date = '%d/%d-%d:%d' % (date.month, date.day, date.hour, date.minute)
-    config.reminders.append('%s|%s|%s' % (date, nick, text))
+    if type == 'm':
+        date = datetime.datetime.now() + datetime.timedelta(minutes=duration)
+    elif type == 'h':
+        date = datetime.datetime.now() + datetime.timedelta(hours=duration)
+    elif type == 'd':
+        date = datetime.datetime.now() + datetime.timedelta(days=duration)
+    date = '{0}/{1}-{2}:{3}'.format(date.month, date.day, date.hour, date.minute)
+    config.reminders.append('{0}|{1}|{2}'.format(date, nick, text))
     sync()
 
 def sync():
