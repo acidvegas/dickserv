@@ -181,7 +181,7 @@ class IRC(object):
                                     else:
                                         self.error(chan, 'Invalid file name.', 'Use ".ascii list" for a list of valid file names.')
                             elif cmd == 'define':
-                                definition = dictionary.scrabble(args)
+                                definition = dictionary.define(args)
                                 if definition:
                                     self.sendmsg(chan, '{0} - {1}: {2}'.format(color('Definition', white, blue), args.lower(), definition))
                                 else:
