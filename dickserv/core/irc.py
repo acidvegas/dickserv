@@ -186,16 +186,6 @@ class IRC(object):
                                     self.sendmsg(chan, '{0} - {1}: {2}'.format(color('Definition', white, blue), args.lower(), definition))
                                 else:
                                     self.error(chan, 'No results found.')
-                            elif cmd == 'filter':
-                                if args == 'enable':
-                                    self.mode(self.channel, '+G')
-                                elif args == 'disable':
-                                    self.mode(self.channel, '-G')
-                            elif cmd == 'flood' and host == self.admin_host:
-                                if args == 'enable':
-                                    self.mode(self.channel, '-f [30m,10t]:10')
-                                elif args == 'disable':
-                                    self.mode(self.channel, '+f [10t,30m]:10')
                             elif cmd == 'geoip':
                                 if functions.check_ip(args):
                                     results = geoip.lookup(args)
@@ -380,8 +370,6 @@ class IRC(object):
             self.raw('JOIN {0} {1}'.format(chan, key))
         else:
             self.raw('JOIN ' + chan)
-        if self.operserv:
-            self.mode(chan, '+q ' + self.nickname)
         self.sendmsg(chan, 'Hello, I am the {0}, type {1} for a list of commands.'.format(color('DickServ', pink), color('@help', white)))
 
     def listen(self):
@@ -407,9 +395,6 @@ class IRC(object):
     def loops(self):
         reminder.loop().start()
         unreal.loop().start()
-
-    def mode(self, target, mode):
-        self.raw('MODE {0} {1}'.format(target, mode))
 
     def oper(self, username, password):
         self.raw('OPER {0} {1}'.format(username, password))
