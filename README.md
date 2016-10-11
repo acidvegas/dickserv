@@ -25,10 +25,6 @@ Browse to the */core/* folder and edit the *config.py* file.
 | .date | Get the current date and time. |
 | .define \<word> | Get the definition of <word>. |
 | .dickserv | Information about the bot. |
-| .filter enable | Enable word filters. (+G) |
-| .filter disable | Disable word filters. (-G) |
-| .flood enable | Enable channel message flooding. (-f) |
-| .flood disable | Disable channel message flooding. (+f) |
 | .geoip \<ip> | Geographical location information about \<ip>. |
 | .imdb \<query> | Search IMDb and return the 1st result for <search>. |
 | .isup \<url> | Check if \<url> is up or not. |
