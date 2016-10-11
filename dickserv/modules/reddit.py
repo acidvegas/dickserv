@@ -8,7 +8,7 @@ import functions
 import httplib
 
 def read(subreddit):
-    api  = httplib.get_json('http://www.reddit.com/r/' + subreddit + '.json?limit=10')
+    api  = httplib.get_json('http://www.reddit.com/r/{0}.json?limit=10'.format(subreddit))
     data = [x['data'] for x in api['data']['children']]
     if data:
         results = {}
