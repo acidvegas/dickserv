@@ -8,6 +8,7 @@ import threading
 import time
 
 import config
+import debug
 import functions
 import httplib
 import irc
@@ -29,8 +30,11 @@ class loop(threading.Thread):
         threading.Thread.__init__(self)
     def run(self):
         while True:
-            if time.strftime('%I') == 12:
-                update = check_update()
-                if update:
-                    irc.DickServ.sendmsg(config.channel, 'UnrealIRCd version {0} has been released.'.format(update))
-            time.sleep(45*60)
+            try:
+                if time.strftime('%I') == 12:
+                    update = check_update()
+                    if update:
+                        irc.DickServ.sendmsg(config.channel, 'UnrealIRCd version {0} has been released.'.format(update))
+                time.sleep(45*60)
+            except Exception as ex:
+                debug.error('Error occurred in the Unreal loop!', ex)
