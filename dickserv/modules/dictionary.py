@@ -7,7 +7,7 @@
 import httplib
 import functions
 
-def scrabble(word):
+def define(word):
     source  = httplib.get_source('http://www.merriam-webster.com/dictionary/' + word.replace(' ', '%20'))
     results = functions.between(source, '<meta name="description" content="Define {0}: '.format(word), '">')
     if results:
