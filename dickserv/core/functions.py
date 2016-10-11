@@ -17,20 +17,24 @@ def check_ip(ip):
 def clean_whitespace(string):
     while '  ' in string:
         string = string.replace('  ', ' ')
-    if string[:1]  == ' ' : string = string[1:]
-    if string[-1:] == ' ' : string = string[:-1]
+    if string[:1] == ' ':
+        string = string[1:]
+    if string[-1:] == ' ':
+        string = string[:-1]
     return string
 
 def between(source, start, stop):
     data = re.compile(start + '(.*?)' + stop, re.IGNORECASE).search(source)
-    if data : return data.group(1)
-    else    : return False
+    if data:
+        return data.group(1)
+    else:
+        return False
 
 def date():
     return datetime.datetime.now().strftime('%A, %B %d, %Y - %I:%M %p')
 
 def lucky():
-    return random.choice([True, False, False, False])
+    return random.choice((True, False, False, False))
 
 def random_int(min, max):
     return random.randint(min, max)
@@ -49,4 +53,4 @@ def trim(data, max_length):
 
 def uptime():
     uptime = datetime.datetime(1,1,1) + datetime.timedelta(seconds=time.time() - config.start_time)
-    return '{0} Days, {1} Hours, {2} Minutes, {3} Seconds' % (uptime.day-1, uptime.hour, uptime.minute, uptime.second)
+    return '{0} Days, {1} Hours, {2} Minutes, {3} Seconds'.format(uptime.day-1, uptime.hour, uptime.minute, uptime.second)
