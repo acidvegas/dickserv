@@ -13,6 +13,6 @@ def check(url):
 
 def title(url):
     video_id = check(url).group(4)
-    api      = 'https://vimeo.com/api/v2/video/%s.json' % video_id
+    api      = 'https://vimeo.com/api/v2/video/{0}.json'.format(video_id)
     data     = httplib.get_json(api)
     return data[0]['title']
