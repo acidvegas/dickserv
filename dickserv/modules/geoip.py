@@ -9,7 +9,7 @@ import httplib
 def lookup(ip):
     api = httplib.get_json('http://freegeoip.net/json/' + ip)
     if api['city'] and api['region_name'] and api['country_name']:
-        return '%s, %s, %s' % (api['city'], api['region_name'], api['country_name'])
+        return '{0}, {1}, {2}'.format(api['city'], api['region_name'], api['country_name'])
     elif api['country_name']:
         return api['country_name']
     else:
