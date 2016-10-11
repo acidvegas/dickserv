@@ -18,7 +18,6 @@ from commands import *
 
 # Formatting Control Characters / Color Codes
 bold        = '\x02'
-colour      = '\x03'
 italic      = '\x1D'
 underline   = '\x1F'
 reverse     = '\x16'
@@ -42,13 +41,13 @@ light_grey  = '15'
 
 def color(msg, foreground, background=None):
     if foreground == 'random':
-        foreground = '%02d' % functions.random_int(2,13)
+        foreground = '{0:0>2}'.format(functions.random_int(2,13))
     if background == 'random':
-        background = '%02d' % functions.random_int(2,13)
+        background = '{0:0>2}'.format(functions.random_int(2,13))
     if background:
-        return '%s%s,%s%s%s' % (colour, foreground, background, msg, reset)
+        return '\x03{0},{1}{2}{3}'.format(foreground, background, msg, reset)
     else:
-        return '%s%s%s%s' % (colour, foreground, msg, reset)
+        return '\x03{0}{1}{2}'.format(foreground, msg, reset)
 
 class IRC(object):
     def __init__(self):
@@ -76,7 +75,7 @@ class IRC(object):
             self.sock.connect((self.server, self.port))
             if self.password:
                 self.raw('PASS ' + self.password)
-            self.raw('USER %s 0 * :%s' % (self.username, self.realname))
+            self.raw('USER {0} 0 * :{1}'.format(self.username, self.realname))
             self.raw('NICK ' + self.nickname)
         except Exception as ex:
             debug.error('Failed to connect to IRC server.', ex)
@@ -86,58 +85,47 @@ class IRC(object):
 
     def create_socket(self):
         if self.use_ipv6:
-            family = socket.AF_INET6
+            self.sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
         else:
-            family = socket.AF_INET
-        self.sock = socket.socket(family, socket.SOCK_STREAM)
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         if self.vhost:
             self.sock.bind((self.vhost, 0))
         if self.use_ssl:
             self.sock = ssl.wrap_socket(self.sock)
-            
-    def disconnect(self):
-        if self.sock:
-            try:
-                self.sock.shutdown(socket.SHUT_RDWR)
-            except:
-                pass
-            self.sock.close()
-            self.sock = None
 
     def error(self, chan, msg, reason=None):
         if reason:
-            self.sendmsg(chan, '[%s] %s %s' % (color('ERROR', red), msg, color('(%s)' % str(reason), grey)))
+            self.sendmsg(chan, '[{0}] {1} {2}'.format(color('ERROR', red), msg, color('({0})'.format(str(reason)), grey)))
         else:
-            self.sendmsg(chan, '[%s] %s' % (color('ERROR', red), msg))
+            self.sendmsg(chan, '[{0}] {1}'.format(color('ERROR', red), msg))
 
     def event_connect(self):
         config.start_time = time.time()
         if self.nickserv:
             self.identify(self.username, self.nickserv)
         if self.operserv:
-            self.oper(self.nickname, self.operserv)
+            self.oper(self.username, self.operserv)
         self.join(self.channel, self.key)
         self.join('#scroll')
         self.loops()
         
     def event_disconnect(self):
-        self.disconnect()
-        time.sleep(5)
+        self.sock.close()
+        time.sleep(10)
         self.connect()
         
     def event_join(self, chan, nick):
         if chan == self.channel:
-            self.sendmsg(chan, '%s %s%s' % (color('SMELLO', 'random'), bold, nick.upper()))
-
+            self.sendmsg(chan, '{0} {1}{2}'.format(color('SMELLO', 'random'), bold, nick.upper()))
+    
     def event_kick(self, chan, kicked):
         if chan == self.channel:
             if kicked == self.nickname:
                 self.join(self.channel, self.key)
             else:
-                self.sendmsg(chan, '%s %s%s' % (color('BYE', 'random'), bold, kicked.upper()))
-        elif chan == '#scroll':
-            if kicked == self.nickname:
-                self.join('#scroll')
+                self.sendmsg(chan, '{0} {1}{2}'.format(color('BYE', 'random'), bold, kicked.upper()))
+        elif chan == '#scroll' and kicked == self.nickname:
+            self.join('#scroll')
 
     def event_message(self, chan, nick, host, msg):
         try:
@@ -156,19 +144,19 @@ class IRC(object):
                         self.sendmsg(chan, 'https://github.com/acidvegas/dickserv/blob/master/README.md#commands')
                 else:
                     cmd  = msg.split()[0].replace('.', '', 1)
-                    args = msg[len(cmd)+2:].split()
+                    args = msg.replace(msg.split()[0], '', 1)[1:]
                     if time.time() - self.last_time < self.cmd_throttle:
                         self.sendmsg(chan, color('Slow down nerd!', red))
                     else:
                         if not args:
                             if cmd == 'btc':
-                                self.sendmsg(chan, '%s - %s' % (color('BTC', orange), cryptocurrency.btc()))
+                                self.sendmsg(chan, '{0} - {1}'.format(color('BTC', orange), cryptocurrency.btc()))
                             elif cmd == 'date':
                                 self.sendmsg(chan, functions.date())
                             elif cmd == 'dickserv':
                                 self.sendmsg(chan, bold + 'DickServ IRC Bot - Developed by acidvegas in Python 3 - https://github.com/acidvegas/dickserv')
                             elif cmd == 'ltc':
-                                self.sendmsg(chan, '%s - %s' % (color('LTC', grey), cryptocurrency.ltc()))
+                                self.sendmsg(chan, '{0} - {1}'.format(color('LTC', grey), cryptocurrency.ltc()))
                             elif cmd == 'talent':
                                 self.sendmsg(chan, color('(^)', 'random'))
                             elif cmd == 'uptime':
@@ -186,7 +174,7 @@ class IRC(object):
                                     lines = ascii.read(args)
                                     if lines:
                                         if len(lines) > 50:
-                                            self.error(chan, 'File is too big.', 'Take it to %s' % color('#scroll', light_blue))
+                                            self.error(chan, 'File is too big.', 'Take it to ' + color('#scroll', light_blue))
                                         else:
                                             for line in lines:
                                                 self.sendmsg(chan, line)
@@ -195,7 +183,7 @@ class IRC(object):
                             elif cmd == 'define':
                                 definition = dictionary.scrabble(args)
                                 if definition:
-                                    self.sendmsg(chan, '%s - %s: %s' % (color('Definition', white, blue), args.lower(), definition))
+                                    self.sendmsg(chan, '{0} - {1}: {2}'.format(color('Definition', white, blue), args.lower(), definition))
                                 else:
                                     self.error(chan, 'No results found.')
                             elif cmd == 'filter':
@@ -220,25 +208,25 @@ class IRC(object):
                             elif cmd == 'imdb':
                                 api = imdb.search(args)
                                 if api:
-                                    self.sendmsg(chan, '%sTitle       :%s %s' % (bold, reset, color('%s %s %s' % (api['Title'], api['Rated'], api['Year']), grey)))
-                                    self.sendmsg(chan, '%sLink        :%s %s' % (bold, reset, color('http://imdb.com/title/' +  api['imdbID'], grey)))
-                                    self.sendmsg(chan, '%sGenre       :%s %s' % (bold, reset, color(api['Genre'], grey)))
-                                    self.sendmsg(chan, '%sRating      :%s %s' % (bold, reset, color(api['imdbRating'], grey)))
+                                    self.sendmsg(chan, '{0}Title       :{1} {2}'.format(bold, reset, color('{0} {1} {2}'.format(api['Title'], api['Rated'], api['Year']), grey)))
+                                    self.sendmsg(chan, '{0}Link        :{1} {2}'.format(bold, reset, color('http://imdb.com/title/' +  api['imdbID'], grey)))
+                                    self.sendmsg(chan, '{0}Genre       :{1} {2}'.format(bold, reset, color(api['Genre'], grey)))
+                                    self.sendmsg(chan, '{0}Rating      :{1} {2}'.format(bold, reset, color(api['imdbRating'], grey)))
                                     prefix = bold + 'Description :' + reset
                                     for line in re.findall(r'.{1,60}(?:\s+|$)', api['Plot']):
-                                        self.sendmsg(chan, '%s %s' % (prefix, color(line, grey)))
+                                        self.sendmsg(chan, '{0} {1}'.format(prefix, color(line, grey)))
                                         prefix = '             '
                                 else:
                                     self.error(chan, 'No results found.')
                             elif cmd == 'isup':
-                                self.sendmsg(chan, '%s is %s' % (args, isup.check(args)))
+                                self.sendmsg(chan, '{0} is {1}'.format(args, isup.check(args)))
                             elif cmd == 'r':
                                 api = reddit.read(args)
                                 if api:
                                     data = list(api.keys())
                                     for i in data:
                                         count = str(data.index(i)+1)
-                                        self.sendmsg(chan, '%s %s %s%s%s%s%s' % (color('[' + str(count) + ']', pink), functions.trim(i, 70), color('[%s|' % str(api[i]['score']), white), color('+' + str(api[i]['ups']), green), color('/', white), color('-' + str(api[i]['downs']), red), color(']', white)))
+                                        self.sendmsg(chan, '{0} {1} {2}{3}{4}{5}{6}'.format(color('[{0}]'.format(str(count)), pink), functions.trim(i, 70), color('[{0}|'.format(str(api[i]['score'])), white), color('+' + str(api[i]['ups']), green), color('/', white), color('-' + str(api[i]['downs']), red), color(']', white)))
                                         self.sendmsg(chan, ' - ' + color(api[i]['url'], grey))
                                 else:
                                     self.error(chan, 'No results found.')
@@ -264,16 +252,16 @@ class IRC(object):
                                     self.error(chan, 'Missing arguments.')
                             elif cmd == 'resolve':
                                 if functions.check_ip(args):
-                                    self.sendmsg(chan, resolve.host(args))
+                                    self.sendmsg(chan, socket.gethostbyaddr(args)[0])
                                 else:
-                                    self.sendmsg(chan, resolve.url(httplib.clean_url(args)))
+                                    self.sendmsg(chan, socket.gethostbyname(httplib.clean_url(args)))
                             elif cmd == 'steam':
                                 api  = steam.search(args)
                                 if api:
                                     data = list(api.keys())
                                     for i in data:
                                         count = str(data.index(i)+1)
-                                        self.sendmsg(chan, '%s %s' % (color('[' + str(count) + ']', pink), i))
+                                        self.sendmsg(chan, '{0} {1}'.format(color('[{0}]'.format(str(count)), pink), i))
                                         self.sendmsg(chan, ' - ' + color(api[i], grey))
                                 else:
                                     self.error(chan, 'No results found.')
@@ -283,17 +271,17 @@ class IRC(object):
                                     data = list(api.keys())
                                     for i in data:
                                         count = str(data.index(i)+1)
-                                        self.sendmsg(chan, '%s %s %s%s%s%s%s' % (color('[' + str(count) + ']', pink), i, color('[', white), color(api[i]['seeders'], green), color('|', white), color(api[i]['leechers'], red), color(']', white)))
+                                        self.sendmsg(chan, '{0} {1} {2}{3}{4}{5}{6}'.format(color('[{0}]'.format(str(count)), pink), i, color('[', white), color(api[i]['seeders'], green), color('|', white), color(api[i]['leechers'], red), color(']', white)))
                                         self.sendmsg(chan, ' - ' + color(api[i]['url'], grey))
                                 else:
                                     self.error(chan, 'No results found.')
                             elif cmd == 'ud':
                                 definition = dictionary.urban(args)
-                                if definition : self.sendmsg(chan, '%s%s - %s: %s' % (color('urban', white, blue), color('DICTIONARY', yellow, black), args, definition))
+                                if definition : self.sendmsg(chan, '{0}{1} - {2}: {3}'.format(color('urban', white, blue), color('DICTIONARY', yellow, black), args, definition))
                                 else          : self.error(chan, 'No results found.')
                             elif cmd == 'wolfram':
                                 results = wolfram.ask(args)
-                                if results : self.sendmsg(chan, '%s%s - %s' % (color('Wolfram', red), color('Alpha', orange), results))
+                                if results : self.sendmsg(chan, '{0}{1} - {2}'.format(color('Wolfram', red), color('Alpha', orange), results))
                                 else       : self.error(chan, 'No results found.')
                             elif cmd == 'yt':
                                 api  = youtube.search(args)
@@ -301,7 +289,7 @@ class IRC(object):
                                     data = list(api.keys())
                                     for i in api.keys():
                                         count = str(data.index(i)+1)
-                                        self.sendmsg(chan, '%s %s' % (color('[' + str(count) + ']', pink), functions.trim(i, 70)))
+                                        self.sendmsg(chan, '{0} {1}'.format(color('[{0}]'.format(str(count)), pink), functions.trim(i, 70)))
                                         self.sendmsg(chan, ' - ' + color(api[i], grey))
                                 else:
                                     self.error(chan, 'No results found.')
@@ -334,26 +322,26 @@ class IRC(object):
         debug.error_exit('DickServ is already running.')
             
     def event_part(self, chan, nick):
-        self.sendmsg(chan, '%s %s%s' % (color('BYE', 'random'), bold, nick.upper()))
+        self.sendmsg(chan, '{0} {1}{2}'.format(color('BYE', 'random'), bold, nick.upper()))
 
     def event_url(self, chan, url):
         try:
             if youtube.check(url):
                 title = youtube.title(url)
-                self.sendmsg(chan, '%s%s %s%s' % (color('You', black, white), color('Tube', white, red), bold, title))
+                self.sendmsg(chan, '{0}{1} {2}{3}'.format(color('You', black, white), color('Tube', white, red), bold, title))
             elif vimeo.check(url):
                 title = vimeo.title(url)
-                self.sendmsg(chan, '%s %s%s' % (color('vimeo', white, cyan), bold, title))
+                self.sendmsg(chan, '{0} {1}{2}'.format(color('vimeo', white, cyan), bold, title))
             else:
                 url_type = httplib.get_type(url)
                 if url_type == 'text/html':
                     title = httplib.get_title(url)
-                    self.sendmsg(chan, '[%s] %s' % (color(url_type, pink), title))
+                    self.sendmsg(chan, '[{0}] {1}'.format(color(url_type, pink), title))
                 else:
                     file_name = httplib.get_file(url)
                     if file_name:
                         file_size = httplib.get_size(url)
-                        self.sendmsg(chan, '[%s] %s [%s]' % (color(url_type, pink), file_name, color(file_size, blue)))
+                        self.sendmsg(chan, '[{0}] {1} [{2}]'.format(color(url_type, pink), file_name, color(file_size, blue)))
         except Exception as ex:
             debug.error('Title Error', ex)
 
@@ -366,35 +354,35 @@ class IRC(object):
         elif args[1] == '433':
             self.event_nick_in_use()
         elif args[1] in ('JOIN','KICK','PART','PRIVMSG'):
-            name = args[0].split('!')[0][1:]
-            if name != self.nickname:
+            nick = args[0].split('!')[0][1:]
+            if nick != self.nickname:
                 chan = args[2]
                 if self.channel in chan or '#scroll' in chan:
                     if args[1] == 'JOIN':
-                        self.event_join(chan[1:], name)
+                        self.event_join(chan[1:], nick)
                     elif args[1] == 'KICK':
                         kicked = args[3]
                         self.event_kick(chan, kicked)
                     elif args[1] == 'PART':
-                        self.event_part(chan, name)
+                        self.event_part(chan, nick)
                     elif args[1] == 'PRIVMSG':
-                        msg  = data.split(args[1] + ' ' + chan + ' :')[1]
+                        msg  = data.split('{0} PRIVMSG {1} :'.format(args[0], chan))[1]
                         host = args[0].split('!')[1].split('@')[1]
-                        self.event_message(chan, name, host, msg)
+                        self.event_message(chan, nick, host, msg)
                 else:
                     self.part(chan, 'smell ya later')
 
     def identify(self, username, password):
-        self.sendmsg('nickserv', 'identify %s %s' % (username, password))
+        self.sendmsg('nickserv', 'identify {0} {1}'.format(username, password))
 
     def join(self, chan, key=None):
         if key:
-            self.raw('JOIN %s %s' % (chan, key))
+            self.raw('JOIN {0} {1}'.format(chan, key))
         else:
             self.raw('JOIN ' + chan)
         if self.operserv:
             self.mode(chan, '+q ' + self.nickname)
-        self.sendmsg(chan, 'Hello, I am the %s, type %s for a list of commands.' % (color('DickServ', pink), color('@help', white)))
+        self.sendmsg(chan, 'Hello, I am the {0}, type {1} for a list of commands.'.format(color('DickServ', pink), color('@help', white)))
 
     def listen(self):
         while True:
@@ -421,21 +409,18 @@ class IRC(object):
         unreal.loop().start()
 
     def mode(self, target, mode):
-        self.raw('MODE %s %s' % (target, mode))
-
-    def notice(self, target, msg):
-        self.raw('NOTICE %s :%s' % (target, msg))
+        self.raw('MODE {0} {1}'.format(target, mode))
 
     def oper(self, username, password):
-        self.raw('OPER %s %s' % (username, password))
+        self.raw('OPER {0} {1}'.format(username, password))
 
     def part(self, chan,  msg):
-        self.raw('PART %s %s' % (chan, msg))
+        self.raw('PART {0} {1}'.format(chan, msg))
 		
     def raw(self, msg):
         self.sock.send(bytes(msg + '\r\n', 'utf-8'))
         
     def sendmsg(self, target, msg):
-        self.raw('PRIVMSG %s :%s' % (target, msg))
+        self.raw('PRIVMSG {0} :{1}'.format(target, msg))
 
 DickServ = IRC()
