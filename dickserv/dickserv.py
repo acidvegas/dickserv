@@ -17,11 +17,7 @@ import irc
 debug.info()
 if not debug.check_version(3):
     debug.error_exit('DickServ requires Python 3!')
-if debug.check_windows():
-    if debug.check_admin():
-        debug.error_exit('Do not run DickServ as an administrator!')
-else:
-    if debug.check_root():
-        debug.error_exit('Do not run DickServ as root!')
+if debug.check_privileges():
+    debug.error_exit('Do not run DickServ as admin/root!')
 debug.check_libs()
 irc.DickServ.connect()
