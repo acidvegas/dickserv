@@ -383,7 +383,7 @@ def listen(self):
                     elif len(line.split()) >= 2:
                         self.handle_events(line)
             except Exception as ex:
-                error('Unexpected error occured.', ex)
+                debug.error('Unexpected error occured.', ex)
                 break
         self.event_disconnect()
 
