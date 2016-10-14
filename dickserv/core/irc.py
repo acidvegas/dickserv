@@ -372,23 +372,18 @@ class IRC(object):
             self.raw('JOIN ' + chan)
         self.sendmsg(chan, 'Hello, I am the {0}, type {1} for a list of commands.'.format(color('DickServ', pink), color('@help', white)))
 
-    def listen(self):
+def listen(self):
         while True:
             try:
-                data = self.sock.recv(1024)
-                for line in data.split(b'\r\n'):
-                    if line:
-                        try:
-                            line = line.decode('utf-8')
-                        except:
-                            pass
-                        debug.irc(line)
-                        if len(line.split()) >= 2:
-                            self.handle_events(line)
-                if b'Closing Link' in data and bytes(self.nickname, 'utf-8') in data:
-                    break
+                data = self.sock.recv(1024).decode('utf-8')
+                for line in (line for line in data.split('\r\n') if line):
+                    debug.irc(line)
+                    if line.startswith('ERROR :Closing Link:') and self.nickname in data:
+                        raise Exception('Connection has closed.')
+                    elif len(line.split()) >= 2:
+                        self.handle_events(line)
             except Exception as ex:
-                debug.error('Unexpected error occured.', ex)
+                error('Unexpected error occured.', ex)
                 break
         self.event_disconnect()
 
