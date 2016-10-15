@@ -9,8 +9,6 @@ import random
 import re
 import time
 
-import config
-
 def check_ip(ip):
     return re.match('^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$', ip)
 
@@ -51,6 +49,6 @@ def trim(data, max_length):
     else:
         return data
 
-def uptime():
-    uptime = datetime.datetime(1,1,1) + datetime.timedelta(seconds=time.time() - config.start_time)
+def uptime(start_time):
+    uptime = datetime.datetime(1,1,1) + datetime.timedelta(seconds=time.time() - start_time)
     return '{0} Days, {1} Hours, {2} Minutes, {3} Seconds'.format(uptime.day-1, uptime.hour, uptime.minute, uptime.second)
