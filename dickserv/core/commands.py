@@ -4,7 +4,6 @@
 # https://github.com/acidvegas/dickserv
 # commands.py
 
-import ascii
 import cryptocurrency
 import dictionary
 import geoip
