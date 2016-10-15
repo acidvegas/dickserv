@@ -63,10 +63,11 @@ class IRC(object):
         self.username     = config.username
         self.realname     = config.realname
         self.nickserv     = config.nickserv
-        self.operserv     = config.operserv
+        self.oper_passwd  = config.oper_passwd
         self.admin_host   = config.admin_host
         self.cmd_throttle = config.cmd_throttle
         self.last_time    = 0
+        self.start_time   = 0
         self.sock         = None
 
     def connect(self):
@@ -100,13 +101,12 @@ class IRC(object):
             self.sendmsg(chan, '[{0}] {1}'.format(color('ERROR', red), msg))
 
     def event_connect(self):
-        config.start_time = time.time()
+        self.start_time = time.time()
         if self.nickserv:
             self.identify(self.username, self.nickserv)
-        if self.operserv:
-            self.oper(self.username, self.operserv)
+        if self.oper_passwd:
+            self.oper(self.username, self.oper_passwd)
         self.join(self.channel, self.key)
-        self.join('#scroll')
         self.loops()
         
     def event_disconnect(self):
@@ -124,10 +124,8 @@ class IRC(object):
                 self.join(self.channel, self.key)
             else:
                 self.sendmsg(chan, '{0} {1}{2}'.format(color('BYE', 'random'), bold, kicked.upper()))
-        elif chan == '#scroll' and kicked == self.nickname:
-            self.join('#scroll')
 
-    def event_message(self, chan, nick, host, msg):
+    def event_message(self, chan, nick, msg):
         try:
             if chan == self.channel:
                 if not msg.startswith('.'):
@@ -160,27 +158,9 @@ class IRC(object):
                             elif cmd == 'talent':
                                 self.sendmsg(chan, color('(^)', 'random'))
                             elif cmd == 'uptime':
-                                self.sendmsg(chan, functions.uptime())
+                                self.sendmsg(chan, functions.uptime(self.start_time))
                         else:
-                            if cmd == 'ascii':
-                                split = args.split()
-                                if split[0] == 'delete' and len(split)== 2 and host == self.admin_host:
-                                    ascii.delete(split[1])
-                                    self.sendmsg(chan, 'File deleted.')
-                                elif split[0] == 'rename' and len(split) == 3 and host == self.admin_host:
-                                    ascii.rename(split[1], split[2])
-                                    self.sendmsg(chan, 'File renamed.')
-                                else:
-                                    lines = ascii.read(args)
-                                    if lines:
-                                        if len(lines) > 50:
-                                            self.error(chan, 'File is too big.', 'Take it to ' + color('#scroll', light_blue))
-                                        else:
-                                            for line in lines:
-                                                self.sendmsg(chan, line)
-                                    else:
-                                        self.error(chan, 'Invalid file name.', 'Use ".ascii list" for a list of valid file names.')
-                            elif cmd == 'define':
+                            if cmd == 'define':
                                 definition = dictionary.define(args)
                                 if definition:
                                     self.sendmsg(chan, '{0} - {1}: {2}'.format(color('Definition', white, blue), args.lower(), definition))
@@ -262,7 +242,7 @@ class IRC(object):
                                     for i in data:
                                         count = str(data.index(i)+1)
                                         self.sendmsg(chan, '{0} {1} {2}{3}{4}{5}{6}'.format(color('[{0}]'.format(str(count)), pink), i, color('[', white), color(api[i]['seeders'], green), color('|', white), color(api[i]['leechers'], red), color(']', white)))
-                                        self.sendmsg(chan, ' - ' + color(api[i]['url'], grey))
+                                        self.sendmsg(chan, ' - ' + color('http://thepiratebay.org' + api[i]['url'], grey))
                                 else:
                                     self.error(chan, 'No results found.')
                             elif cmd == 'ud':
@@ -283,27 +263,6 @@ class IRC(object):
                                         self.sendmsg(chan, ' - ' + color(api[i], grey))
                                 else:
                                     self.error(chan, 'No results found.')
-                        self.last_time = time.time()
-            if chan == '#scroll':
-                cmd  = msg.split()[0].replace('.', '', 1)
-                args = msg.replace(msg.split()[0], '', 1)[1:]
-                if time.time() - self.last_time < self.cmd_throttle:
-                    self.sendmsg(chan, color('Slow down nerd!', red))
-                elif cmd == 'ascii':
-                    split = args.split()
-                    if split[0] == 'delete' and len(split)== 2 and host == self.admin_host:
-                        ascii.delete(split[1])
-                        self.sendmsg(chan, 'File deleted.')
-                    elif split[0] == 'rename' and len(split) == 3 and host == self.admin_host:
-                        ascii.rename(split[1], split[2])
-                        self.sendmsg(chan, 'File renamed.')
-                    else:
-                        lines = ascii.read(args)
-                        if lines:
-                            for line in lines:
-                                self.sendmsg(chan, line)
-                        else:
-                            self.error(chan, 'Invalid file name.', 'Use ".ascii list" for a list of valid file names.')
                     self.last_time = time.time()
         except Exception as ex:
             self.error(chan, 'Command threw an exception.', ex)
@@ -335,6 +294,9 @@ class IRC(object):
         except Exception as ex:
             debug.error('Title Error', ex)
 
+    def event_quit(self, nick):
+        self.sendmsg(self.channel, '{0} {1}{2}'.format(color('BYE', 'random'), bold, nick.upper()))
+
     def handle_events(self, data):
         args = data.split()
         if args[0] == 'PING':
@@ -343,24 +305,25 @@ class IRC(object):
             self.event_connect()
         elif args[1] == '433':
             self.event_nick_in_use()
-        elif args[1] in ('JOIN','KICK','PART','PRIVMSG'):
+        elif args[1] in ('JOIN','KICK','PART','PRIVMSG','QUIT'):
             nick = args[0].split('!')[0][1:]
             if nick != self.nickname:
-                chan = args[2]
-                if self.channel in chan or '#scroll' in chan:
-                    if args[1] == 'JOIN':
-                        self.event_join(chan[1:], nick)
-                    elif args[1] == 'KICK':
-                        kicked = args[3]
-                        self.event_kick(chan, kicked)
-                    elif args[1] == 'PART':
-                        self.event_part(chan, nick)
-                    elif args[1] == 'PRIVMSG':
-                        msg  = data.split('{0} PRIVMSG {1} :'.format(args[0], chan))[1]
-                        host = args[0].split('!')[1].split('@')[1]
-                        self.event_message(chan, nick, host, msg)
-                else:
-                    self.part(chan, 'smell ya later')
+                if args[1] == 'JOIN':
+                    chan = args[2][1:]
+                    self.event_join(chan, nick)
+                elif args[1] == 'KICK':
+                    chan   = args[2]
+                    kicked = args[3]
+                    self.event_kick(chan, kicked)
+                elif args[1] == 'PART':
+                    chan = args[2]
+                    self.event_part(chan, nick)
+                elif args[1] == 'PRIVMSG':
+                    chan = args[2]
+                    msg  = data.split('{0} PRIVMSG {1} :'.format(args[0], chan))[1]
+                    self.event_message(chan, nick, msg)
+                elif args[1] == 'QUIT':
+                    self.event_quit(nick)
 
     def identify(self, username, password):
         self.sendmsg('nickserv', 'identify {0} {1}'.format(username, password))
@@ -372,13 +335,13 @@ class IRC(object):
             self.raw('JOIN ' + chan)
         self.sendmsg(chan, 'Hello, I am the {0}, type {1} for a list of commands.'.format(color('DickServ', pink), color('@help', white)))
 
-def listen(self):
+    def listen(self):
         while True:
             try:
                 data = self.sock.recv(1024).decode('utf-8')
                 for line in (line for line in data.split('\r\n') if line):
                     debug.irc(line)
-                    if line.startswith('ERROR :Closing Link:') and self.nickname in data:
+                    if line.startswith('ERROR :Closing Link:'):
                         raise Exception('Connection has closed.')
                     elif len(line.split()) >= 2:
                         self.handle_events(line)
@@ -393,9 +356,6 @@ def listen(self):
 
     def oper(self, username, password):
         self.raw('OPER {0} {1}'.format(username, password))
-
-    def part(self, chan,  msg):
-        self.raw('PART {0} {1}'.format(chan, msg))
 		
     def raw(self, msg):
         self.sock.send(bytes(msg + '\r\n', 'utf-8'))
