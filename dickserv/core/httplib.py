@@ -60,7 +60,7 @@ def get_type(url):
 def get_url(url):
     req = urllib.request.Request(url)
     req.add_header('User-Agent', 'DickServ/1.0')
-    return urllib.request.urlopen(req)
+    return urllib.request.urlopen(req, timeout=10)
 
 def parse_urls(string):
     return re.compile('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', re.IGNORECASE).findall(string)
