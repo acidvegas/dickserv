@@ -23,8 +23,8 @@ username = 'dickserv'
 realname = 'DickServ IRC Bot'
 
 # Login
-nickserv = None
-operserv = None
+nickserv    = None
+oper_passwd = None
 
 # Other
 admin_host   = 'admin.host'
@@ -34,4 +34,3 @@ unreal_dir   = '~/unreal/' # For running the bot side-by-side with UnrealIRCd. S
 # DO NOT EDIT
 data_dir   = os.path.join(os.path.dirname(os.path.realpath(inspect.stack()[-1][1])), 'data')
 reminders  = []
-start_time = 0
