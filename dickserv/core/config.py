@@ -29,7 +29,6 @@ oper_passwd = None
 # Other
 admin_host   = 'admin.host'
 cmd_throttle = 3
-unreal_dir   = '~/unreal/' # For running the bot side-by-side with UnrealIRCd. See modules/unreal.py for more information.
 
 # DO NOT EDIT
 data_dir   = os.path.join(os.path.dirname(os.path.realpath(inspect.stack()[-1][1])), 'data')

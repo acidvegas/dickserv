@@ -24,6 +24,7 @@ Browse to the */core/* folder and edit the *config.py* file.
 | .imdb \<query> | Search IMDb and return the 1st result for \<query>. |
 | .isup \<url> | Check if \<url> is up or not. |
 | .ltc | Litecoin rate in USD. |
+| .netsplit \<query> | Search for \<query> on NetSplit. |
 | .r \<subreddit> | Read top posts from \<subreddit> |
 | .remind \<time> \<text> | Remind yourself about \<text> in \<time>. |
 | .resolve \<ip/url> | Resolve a(n) \<ip/url> to a(n) hostname or IP address. |

@@ -47,7 +47,7 @@ def get_source(url):
         return source.read().decode(charset)
     else:
         return source.read().decode()
-    
+
 def get_title(url):
     source = get_source(url)
     soup   = BeautifulSoup(source, 'html.parser')

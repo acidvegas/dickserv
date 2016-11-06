@@ -9,6 +9,7 @@ import dictionary
 import geoip
 import imdb
 import isup
+import netsplit
 import reddit
 import reminder
 import steam

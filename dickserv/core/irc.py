@@ -108,16 +108,16 @@ class IRC(object):
             self.oper(self.username, self.oper_passwd)
         self.join(self.channel, self.key)
         self.loops()
-        
+
     def event_disconnect(self):
         self.sock.close()
         time.sleep(10)
         self.connect()
-        
+
     def event_join(self, chan, nick):
         if chan == self.channel:
             self.sendmsg(chan, '{0} {1}{2}'.format(color('SMELLO', 'random'), bold, nick.upper()))
-    
+
     def event_kick(self, chan, kicked):
         if chan == self.channel:
             if kicked == self.nickname:
@@ -190,6 +190,16 @@ class IRC(object):
                                     self.error(chan, 'No results found.')
                             elif cmd == 'isup':
                                 self.sendmsg(chan, '{0} is {1}'.format(args, isup.check(args)))
+                            elif cmd == 'netsplit':
+                                api = netsplit.search(args)
+                                if api:
+                                    data = list(api.keys())
+                                    for i in data:
+                                        count = str(data.index(i)+1)
+                                        self.sendmsg(chan, '{0} {1} {2} / {3}'.format(color('[{0}]'.format(str(count)), pink), color(i, light_blue), color('({0})'.format(api[i]['users']), grey), color(api[i]['network'], red)))
+                                        self.sendmsg(chan, color(' - ' + api[i]['topic'], grey))
+                                else:
+                                    self.error(chan, 'No results found.')
                             elif cmd == 'r':
                                 api = reddit.read(args)
                                 if api:
@@ -269,7 +279,7 @@ class IRC(object):
 
     def event_nick_in_use(self):
         debug.error_exit('DickServ is already running.')
-            
+
     def event_part(self, chan, nick):
         self.sendmsg(chan, '{0} {1}{2}'.format(color('BYE', 'random'), bold, nick.upper()))
 
@@ -356,10 +366,10 @@ class IRC(object):
 
     def oper(self, username, password):
         self.raw('OPER {0} {1}'.format(username, password))
-		
+
     def raw(self, msg):
         self.sock.send(bytes(msg + '\r\n', 'utf-8'))
-        
+
     def sendmsg(self, target, msg):
         self.raw('PRIVMSG {0} :{1}'.format(target, msg))
 

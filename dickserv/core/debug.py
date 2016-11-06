@@ -8,7 +8,7 @@ import ctypes
 import os
 import sys
 import time
-        
+
 def check_libs():
     try:
         import bs4
@@ -38,7 +38,7 @@ def check_windows():
         return True
     else:
         return False
-    
+
 def clear():
     if check_windows():
         os.system('cls')

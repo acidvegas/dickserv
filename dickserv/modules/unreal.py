@@ -13,6 +13,8 @@ import functions
 import httplib
 import irc
 
+unreal_dir = '~/unreal/'
+
 def check_update():
     source = httplib.get_source('https://www.unrealircd.org/docs/FAQ')
     latest = functions.between(source, 'The latest <b>Stable</b> version is <b>', '</b> which was released on ')
@@ -22,7 +24,7 @@ def check_update():
         return False
 
 def current_version():
-    version = os.popen(config.unreal_dir + './unrealircd version').read()
+    version = os.popen(unreal_dir + './unrealircd version').read()
     return version[11:].split()[0]
 
 class loop(threading.Thread):
