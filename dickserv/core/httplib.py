@@ -36,9 +36,9 @@ def get_size(url):
     content_length = int(get_url(url).getheader('content-length'))
     for unit in ('B','KB','MB','GB','TB','PB','EB','ZB'):
         if abs(content_length) < 1024.0:
-            return str(content_length) + unit
+            return '{0:.2f}'.format(content_length) + unit
         content_length /= 1024.0
-    return str(content_length) + 'YB'
+    return '{0:.2f}'.format(content_length) + 'YB'
 
 def get_source(url):
     source  = get_url(url)
