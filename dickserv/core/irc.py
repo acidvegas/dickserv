@@ -178,13 +178,13 @@ class IRC(object):
                             elif cmd == 'imdb':
                                 api = imdb.search(args)
                                 if api:
-                                    self.sendmsg(chan, '{0}Title       :{1} {2}'.format(bold, reset, color('{0} {1} {2}'.format(api['Title'], api['Rated'], api['Year']), grey)))
-                                    self.sendmsg(chan, '{0}Link        :{1} {2}'.format(bold, reset, color('http://imdb.com/title/' +  api['imdbID'], grey)))
-                                    self.sendmsg(chan, '{0}Genre       :{1} {2}'.format(bold, reset, color(api['Genre'], grey)))
-                                    self.sendmsg(chan, '{0}Rating      :{1} {2}'.format(bold, reset, color(api['imdbRating'], grey)))
-                                    prefix = bold + 'Description :' + reset
+                                    self.sendmsg(chan, color('{0}Title       {1}: {2}'.format(bold, reset, color('{0} {1} {2}'.format(api['Title'], '| ' + 'Rated: ' + api['Rated'], '| Released: ' + api['Year']), light_grey)), yellow, blue))
+                                    self.sendmsg(chan, color('{0}Link        {1}: {2}'.format(bold, reset, color('http://imdb.com/title/' +  api['imdbID'], light_blue)), yellow, blue))
+                                    self.sendmsg(chan, color('{0}Genre       {1}: {2}'.format(bold, reset, color(api['Genre'], light_grey)), yellow, blue))
+                                    self.sendmsg(chan, color('{0}Rating      {1}: {2}'.format(bold, reset, color(api['imdbRating'], yellow)), yellow, blue))
+                                    prefix = bold + color('Description ',yellow, blue) + reset + ':'
                                     for line in re.findall(r'.{1,60}(?:\s+|$)', api['Plot']):
-                                        self.sendmsg(chan, '{0} {1}'.format(prefix, color(line, grey)))
+                                        self.sendmsg(chan, '{0} {1}'.format(prefix, color(line, light_grey)))
                                         prefix = '             '
                                 else:
                                     self.error(chan, 'No results found.')
