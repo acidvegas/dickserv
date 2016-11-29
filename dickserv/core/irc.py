@@ -255,6 +255,32 @@ class IRC(object):
                                         self.sendmsg(chan, ' - ' + color('http://thepiratebay.org' + api[i]['url'], grey))
                                 else:
                                     self.error(chan, 'No results found.')
+                            elif cmd == 'drug':
+                                api = tripsit.search(args)
+                                if api:
+                                    self.sendmsg(chan, color(api['data'][0]['name'], light_grey, pink))
+                                    prefix = bold + color('summary      ',pink, light_grey) + reset + ':'
+                                    for line in re.findall(r'.{1,60}(?:\s+|$)', api['data'][0]['properties']['summary']):
+                                        self.sendmsg(chan, '{0} {1}'.format(prefix, color(line, light_grey)))
+                                        prefix = '             '
+                                
+                                    prefix = bold + color('duration     ',pink, light_grey) + reset + ':'
+                                    for line in re.findall(r'.{1,60}(?:\s+|$)', api['data'][0]['properties']['duration']):
+                                        self.sendmsg(chan, '{0} {1}'.format(prefix, color(line, light_grey)))
+                                        prefix = '             '
+                                
+                                    prefix = bold + color('dose         ',pink, light_grey) + reset + ':'
+                                    for line in re.findall(r'.{1,60}(?:\s+|$)', api['data'][0]['properties']['dose']):
+                                        self.sendmsg(chan, '{0} {1}'.format(prefix, color(line, light_grey)))
+                                        prefix = '             '
+                                
+                                    prefix = bold + color('effects      ',pink, light_grey) + reset + ':'
+                                    for line in re.findall(r'.{1,60}(?:\s+|$)', api['data'][0]['properties']['effects']):
+                                        self.sendmsg(chan, '{0} {1}'.format(prefix, color(line, light_grey)))
+                                        prefix = '             '
+                                
+                                else:
+                                    self.error(chan, 'No results found.')
                             elif cmd == 'ud':
                                 definition = dictionary.urban(args)
                                 if definition : self.sendmsg(chan, '{0}{1} - {2}: {3}'.format(color('urban', white, blue), color('DICTIONARY', yellow, black), args, definition))
@@ -343,7 +369,7 @@ class IRC(object):
             self.raw('JOIN {0} {1}'.format(chan, key))
         else:
             self.raw('JOIN ' + chan)
-        self.sendmsg(chan, 'Hello, I am the {0}, type {1} for a list of commands.'.format(color('DickServ', pink), color('@help', white)))
+        self.sendmsg(chan, 'Hello, I am the {0}, type {1} for a list of commands.'.format(color('jewServ', light_cyan), color('@burnjews', white)))
 
     def listen(self):
         while True:
